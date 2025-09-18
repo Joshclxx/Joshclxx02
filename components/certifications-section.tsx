@@ -4,7 +4,7 @@ import Image from "next/image";
 const certifications = [
   {
     title: "Six Sigma Yellow belt",
-    issuer: "Sis Sigma Study Targeting Success",
+    issuer: "Six Sigma Study Targeting Success",
     date: "2025",
     logo: "/images/six-sigma.png",
     pdf: "/pdf/Six-Sigma.pdf",
