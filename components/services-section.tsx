@@ -6,7 +6,7 @@ const services = [
     icon: Code,
     title: "Frontend Development",
     description:
-      "Building responsive, performant web applications using modern frameworks like React, Next.js, and Vue.js.",
+      "Building responsive, performant web applications using modern frameworks like React, Next.js, and Tailwind.CSS.",
   },
   {
     icon: Smartphone,
@@ -24,7 +24,7 @@ const services = [
     icon: GitBranch,
     title: "Version Control & Collaboration",
     description:
-      "Using tools like Git and to manage code, track changes, and collaborate effectively in team projects.",
+      "Using tools like Git and GitHub to manage code, track changes, and collaborate effectively in team projects.",
   },
 ];
 

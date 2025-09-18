@@ -68,7 +68,7 @@ export function HeroSection() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link
-              href="/pdf/Colobong_CV.pdf"
+              href="/pdf/Joshclxx_CV.pdf"
               target="_blank"
               rel="noopener noreferrer"
             >
