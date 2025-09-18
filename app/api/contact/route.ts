@@ -5,6 +5,15 @@ export async function POST(req: Request) {
   try {
     const { name, email, message } = await req.json();
 
+    // Safety check
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error("Missing EMAIL_USER or EMAIL_PASS");
+      return NextResponse.json(
+        { success: false, error: "Server misconfigured" },
+        { status: 500 }
+      );
+    }
+
     // Create transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -16,7 +25,8 @@ export async function POST(req: Request) {
 
     // Send email
     await transporter.sendMail({
-      from: email,
+      from: `"${name}" <${process.env.EMAIL_USER}>`, // safer
+      replyTo: email, // sets real reply-to
       to: "joshclxx02@gmail.com",
       subject: `📩 New Message from ${name}`,
       text: `You received a new message from ${name} (${email}):\n\n${message}`,
