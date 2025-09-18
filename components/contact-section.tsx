@@ -27,11 +27,13 @@ export function ContactSection() {
         body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         toast.success("Message sent successfully!");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        toast.error("Failed to send message. Please try again.");
+        toast.error(data.error || "Failed to send message. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
