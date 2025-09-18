@@ -19,8 +19,8 @@ export function AboutSection() {
                   <p className="text-muted-foreground mb-4 text-pretty text-justify">
                     I'm a frontend developer passionate about building fast,
                     accessible, and responsive web interfaces. I specialize in
-                    and—transforming ideas and designs into smooth,
-                    pixel-perfect experiences.
+                    React, Next.js, TypeScript, Tailwind.CSS and—transforming
+                    ideas and designs into smooth, pixel-perfect experiences.
                   </p>
                   <p className="text-muted-foreground mb-4 text-pretty text-justify">
                     With a strong focus on clean code, performance, and
