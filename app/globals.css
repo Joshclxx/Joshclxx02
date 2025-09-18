@@ -1,27 +1,161 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Updated color palette to match the futuristic design brief */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a334a;
+  --card: #f0f4f8;
+  --card-foreground: #1a334a;
+  --popover: #ffffff;
+  --popover-foreground: #1a334a;
+  --primary: #1a334a;
+  --primary-foreground: #ffffff;
+  --secondary: #18a3b7;
+  --secondary-foreground: #ffffff;
+  --muted: #f0f4f8;
+  --muted-foreground: #1a334a;
+  --accent: #27e6ec;
+  --accent-foreground: #1a334a;
+  --destructive: #ff4d4d;
+  --destructive-foreground: #ffffff;
+  --border: #e0e0e0;
+  --input: #f0f4f8;
+  --ring: #27e6ec;
+  --chart-1: #5aa5cd;
+  --chart-2: #6f71a1;
+  --chart-3: #18a3b7;
+  --chart-4: #27e6ec;
+  --chart-5: #1e536e;
+  --radius: 0.5rem;
+  --sidebar: #f0f4f8;
+  --sidebar-foreground: #1a334a;
+  --sidebar-primary: #1e536e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27e6ec;
+  --sidebar-accent-foreground: #1a334a;
+  --sidebar-border: #e0e0e0;
+  --sidebar-ring: #18a3b7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.dark {
+  /* Updated dark mode colors to maintain the futuristic theme */
+  --background: #0a1a2a;
+  --foreground: #ffffff;
+  --card: #1a334a;
+  --card-foreground: #ffffff;
+  --popover: #1a334a;
+  --popover-foreground: #ffffff;
+  --primary: #27e6ec;
+  --primary-foreground: #1a334a;
+  --secondary: #18a3b7;
+  --secondary-foreground: #ffffff;
+  --muted: #1e536e;
+  --muted-foreground: #f0f4f8;
+  --accent: #27e6ec;
+  --accent-foreground: #1a334a;
+  --destructive: #ff6b6b;
+  --destructive-foreground: #ffffff;
+  --border: #1e536e;
+  --input: #1a334a;
+  --ring: #27e6ec;
+  --chart-1: #5aa5cd;
+  --chart-2: #6f71a1;
+  --chart-3: #18a3b7;
+  --chart-4: #27e6ec;
+  --chart-5: #1e536e;
+  --sidebar: #1a334a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #27e6ec;
+  --sidebar-primary-foreground: #1a334a;
+  --sidebar-accent: #18a3b7;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1e536e;
+  --sidebar-ring: #27e6ec;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Added smooth scroll behavior for section navigation */
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Added custom animations for the futuristic theme */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(39, 230, 236, 0.3);
   }
+  50% {
+    box-shadow: 0 0 20px rgba(39, 230, 236, 0.6);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
 }
