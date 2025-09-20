@@ -42,9 +42,31 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+      document.documentElement.classList.add("light");
+      setIsDark(false);
+    } else {
+      // default to dark
+      document.documentElement.classList.remove("light");
+      setIsDark(true);
+    }
+  }, []);
+
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark");
+    if (isDark) {
+      // Switch to light mode
+      document.documentElement.classList.add("light");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      // Switch back to dark (default)
+      document.documentElement.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
   };
 
   const navItems = [

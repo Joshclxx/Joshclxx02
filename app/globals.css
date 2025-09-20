@@ -4,7 +4,44 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color palette to match the futuristic design brief */
+  /* Dark mode colors moved here → now default */
+  --background: #0a1a2a;
+  --foreground: #ffffff;
+  --card: #1a334a;
+  --card-foreground: #ffffff;
+  --popover: #1a334a;
+  --popover-foreground: #ffffff;
+  --primary: #27e6ec;
+  --primary-foreground: #1a334a;
+  --secondary: #18a3b7;
+  --secondary-foreground: #ffffff;
+  --muted: #1e536e;
+  --muted-foreground: #f0f4f8;
+  --accent: #27e6ec;
+  --accent-foreground: #1a334a;
+  --destructive: #ff6b6b;
+  --destructive-foreground: #ffffff;
+  --border: #1e536e;
+  --input: #1a334a;
+  --ring: #27e6ec;
+  --chart-1: #5aa5cd;
+  --chart-2: #6f71a1;
+  --chart-3: #18a3b7;
+  --chart-4: #27e6ec;
+  --chart-5: #1e536e;
+  --radius: 0.5rem;
+  --sidebar: #1a334a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #27e6ec;
+  --sidebar-primary-foreground: #1a334a;
+  --sidebar-accent: #18a3b7;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1e536e;
+  --sidebar-ring: #27e6ec;
+}
+
+.light {
+  /* Light mode colors moved here */
   --background: #ffffff;
   --foreground: #1a334a;
   --card: #f0f4f8;
@@ -38,42 +75,6 @@
   --sidebar-accent-foreground: #1a334a;
   --sidebar-border: #e0e0e0;
   --sidebar-ring: #18a3b7;
-}
-
-.dark {
-  /* Updated dark mode colors to maintain the futuristic theme */
-  --background: #0a1a2a;
-  --foreground: #ffffff;
-  --card: #1a334a;
-  --card-foreground: #ffffff;
-  --popover: #1a334a;
-  --popover-foreground: #ffffff;
-  --primary: #27e6ec;
-  --primary-foreground: #1a334a;
-  --secondary: #18a3b7;
-  --secondary-foreground: #ffffff;
-  --muted: #1e536e;
-  --muted-foreground: #f0f4f8;
-  --accent: #27e6ec;
-  --accent-foreground: #1a334a;
-  --destructive: #ff6b6b;
-  --destructive-foreground: #ffffff;
-  --border: #1e536e;
-  --input: #1a334a;
-  --ring: #27e6ec;
-  --chart-1: #5aa5cd;
-  --chart-2: #6f71a1;
-  --chart-3: #18a3b7;
-  --chart-4: #27e6ec;
-  --chart-5: #1e536e;
-  --sidebar: #1a334a;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #27e6ec;
-  --sidebar-primary-foreground: #1a334a;
-  --sidebar-accent: #18a3b7;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #1e536e;
-  --sidebar-ring: #27e6ec;
 }
 
 @theme inline {

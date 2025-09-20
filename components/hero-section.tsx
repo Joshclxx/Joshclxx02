@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Github, Linkedin, Download, Mail } from "lucide-react";
 import Image from "next/image";
@@ -81,20 +83,20 @@ export function HeroSection() {
               </Button>
             </Link>
 
-            <Link
-              href={`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 bg-transparent"
+              onClick={() => {
+                const contactSection = document.getElementById("contact");
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
             >
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 bg-transparent"
-              >
-                <Mail className="mr-2 h-5 w-5" />
-                Get In Touch
-              </Button>
-            </Link>
+              <Mail className="mr-2 h-5 w-5" />
+              Get In Touch
+            </Button>
           </div>
 
           {/* Social Links */}
