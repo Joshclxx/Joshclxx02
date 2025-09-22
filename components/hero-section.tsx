@@ -18,18 +18,33 @@ export function HeroSection() {
       className="min-h-screen pt-20 flex items-center justify-center relative overflow-hidden"
     >
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-20" />
 
-      {/* Geometric shapes */}
-      <div className="absolute top-20 left-10 w-20 h-20 border-2 border-accent/30 rotate-45 animate-float" />
-      <div
-        className="absolute bottom-20 right-10 w-16 h-16 bg-secondary/20 rounded-full animate-float"
-        style={{ animationDelay: "1s" }}
-      />
-      <div
-        className="absolute top-1/2 left-20 w-12 h-12 border border-primary/40 animate-float"
-        style={{ animationDelay: "2s" }}
-      />
+      {/* Decorative background objects */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Floating squares */}
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-accent/30 rotate-45 animate-float" />
+        <div
+          className="absolute top-64 right-32 w-16 h-16 border border-secondary/50 rotate-12 animate-float"
+          style={{ animationDelay: "1.5s" }}
+        />
+
+        {/* Glowing circles */}
+        <div
+          className="absolute bottom-20 right-10 w-24 h-24 bg-gradient-to-br from-primary/30 to-accent/20 rounded-full blur-2xl animate-float"
+          style={{ animationDelay: "1s" }}
+        />
+        <div
+          className="absolute top-1/3 left-1/4 w-12 h-12 bg-secondary/30 rounded-full animate-float"
+          style={{ animationDelay: "2s" }}
+        />
+
+        {/* Star-like shape */}
+        <div className="absolute top-1/2 right-1/3 w-3 h-3 bg-accent rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)] animate-pulse" />
+
+        {/* Abstract blob */}
+        <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-gradient-to-r from-accent/20 to-secondary/10 rounded-[50%] blur-3xl animate-float-slow" />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
