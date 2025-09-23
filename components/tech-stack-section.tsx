@@ -1,40 +1,64 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import Slider from "react-infinite-logo-slider";
 import {
   FaReact,
   FaNodeJs,
   FaGitAlt,
+  FaGithub,
   FaFigma,
   FaJsSquare,
+  FaHtml5,
+  FaCss3Alt,
 } from "react-icons/fa";
-import { SiNextdotjs, SiTypescript, SiTailwindcss } from "react-icons/si";
+import {
+  SiNextdotjs,
+  SiTypescript,
+  SiTailwindcss,
+  // SiVisualstudiocode,
+  SiWebflow,
+} from "react-icons/si";
+import { VscCode } from "react-icons/vsc";
 
-const technologies = [
-  { name: "React", icon: <FaReact className="text-sky-500" />, level: 85 },
+const frameworksAndRuntime = [
+  { name: "React", icon: <FaReact className="text-sky-500 text-6xl" /> },
   {
     name: "Next.js",
-    icon: <SiNextdotjs className="text-black dark:text-white" />,
-    level: 75,
+    icon: <SiNextdotjs className="text-black dark:text-white text-6xl" />,
   },
   {
     name: "TypeScript",
-    icon: <SiTypescript className="text-blue-600" />,
-    level: 85,
+    icon: <SiTypescript className="text-blue-600 text-6xl" />,
   },
   {
     name: "Tailwind CSS",
-    icon: <SiTailwindcss className="text-cyan-500" />,
-    level: 85,
+    icon: <SiTailwindcss className="text-cyan-500 text-6xl" />,
   },
   {
     name: "JavaScript",
-    icon: <FaJsSquare className="text-yellow-400" />,
-    level: 75,
+    icon: <FaJsSquare className="text-yellow-400 text-6xl" />,
   },
-  { name: "Node.js", icon: <FaNodeJs className="text-green-600" />, level: 80 },
-  { name: "Git", icon: <FaGitAlt className="text-orange-600" />, level: 85 },
-  { name: "Figma", icon: <FaFigma className="text-pink-500" />, level: 85 },
+  { name: "Node.js", icon: <FaNodeJs className="text-green-600 text-6xl" /> },
+  { name: "HTML", icon: <FaHtml5 className="text-orange-500 text-6xl" /> },
+  { name: "CSS", icon: <FaCss3Alt className="text-blue-500 text-6xl" /> },
+  {
+    name: "Webflow",
+    icon: <SiWebflow className="text-blue-700 text-6xl" />,
+  },
+];
+
+const toolsAndCollab = [
+  { name: "Git", icon: <FaGitAlt className="text-orange-600 text-6xl" /> },
+  { name: "GitHub", icon: <FaGithub className="text-gray-800 text-6xl" /> },
+  { name: "Figma", icon: <FaFigma className="text-pink-500 text-6xl" /> },
+  {
+    name: "VS Code",
+    icon: <img src="/icon/vscode.svg" alt="VS Code" className="w-16 h-16" />,
+  },
+  {
+    name: "Vercel",
+    icon: <img src="/icon/vercel.svg" alt="Vercel" className="w-16 h-16" />,
+  },
 ];
 
 export function TechStackSection() {
@@ -46,32 +70,47 @@ export function TechStackSection() {
             Tech <span className="text-accent">Stack</span>
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {technologies.map((tech, index) => (
-              <Card
-                key={tech.name}
-                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 flex justify-center">
+          {/* Two rows of sliders */}
+          <div className="flex flex-col gap-12">
+            {/* Row 1 - Frameworks & Runtime */}
+            <Slider
+              width="200px"
+              duration={25}
+              pauseOnHover={true}
+              blurBorders={false}
+              blurBorderColor={"#27e6ec"}
+            >
+              {frameworksAndRuntime.map((tech) => (
+                <Slider.Slide key={tech.name}>
+                  <div className="flex flex-col items-center justify-center p-6">
                     {tech.icon}
+                    <span className="mt-4 text-lg font-semibold text-foreground">
+                      {tech.name}
+                    </span>
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">
-                    {tech.name}
-                  </h3>
-                  <div className="w-full bg-muted rounded-full h-2 mb-2">
-                    <div
-                      className="bg-gradient-to-r from-secondary to-accent h-2 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${tech.level}%` }}
-                    />
+                </Slider.Slide>
+              ))}
+            </Slider>
+
+            {/* Row 2 - Tools & Collaboration */}
+            <Slider
+              width="200px"
+              duration={15}
+              pauseOnHover={true}
+              blurBorders={false}
+              blurBorderColor={"#fff"}
+            >
+              {toolsAndCollab.map((tool) => (
+                <Slider.Slide key={tool.name}>
+                  <div className="flex flex-col items-center justify-center p-6">
+                    {tool.icon}
+                    <span className="mt-4 text-lg font-semibold text-foreground">
+                      {tool.name}
+                    </span>
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    {tech.level}%
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
+                </Slider.Slide>
+              ))}
+            </Slider>
           </div>
         </div>
       </div>
