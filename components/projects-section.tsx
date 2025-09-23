@@ -28,11 +28,12 @@ const projects = [
       "Built the frontend of a non-financial school management information system, ensuring responsive design and optimized performance.",
     image: "/images/sms.png",
     technologies: [
-      "React Native",
+      "Next JS",
       "TypeScript",
-      "React Navigation",
+      "Tailwind CSS",
       "Zustand",
-      "Expo",
+      "Vercel",
+      "Git",
     ],
   },
   {
