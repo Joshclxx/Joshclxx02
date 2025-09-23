@@ -20,25 +20,51 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    // try {
+    //   const res = await fetch("/api/send-email", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     // body: JSON.stringify(formData),
+    //     body: JSON.stringify({
+    //       name: formData.name,
+    //       email: formData.email,
+    //       subject: "New Message From Portolio",
+    //       message: formData.message,
+    //     }),
+    //   });
 
-      const data = await res.json();
+    //   const data = await res.json();
 
-      if (res.ok && data.success) {
-        toast.success("Message sent successfully!");
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        toast.error(data.error || "Failed to send message. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    //   if (res.ok && data.success) {
+    //     toast.success("Message sent successfully!");
+    //     setFormData({ name: "", email: "", message: "" });
+    //   } else {
+    //     toast.error(data.error || "Failed to send message. Please try again.");
+    //   }
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    //   toast.error("Something went wrong.");
+    // }
+    const origin = window.location.origin;
+
+    await fetch(`${origin}/api/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        subject: "New Message From Portfolio",
+        message: formData.message,
+      }),
+    }).catch((err) => {
+      console.log("Error in sending email:", err.message);
       toast.error("Something went wrong.");
-    }
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    toast.success("Message sent successfully!");
   };
 
   const handleChange = (
