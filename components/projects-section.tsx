@@ -9,7 +9,7 @@ const projects = [
     description:
       "A modern web-based Point of Sale (POS) system built with Next.js, featuring real-time inventory management, seamless payment integration, and an intuitive admin dashboard.",
     image: "/images/pos.png",
-    technologies: ["Next.js", "TypeScript", "tailwind.CSS"],
+    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
     liveUrl:
       "https://pos-system-git-josh-joshuas-projects-a95d0abd.vercel.app/login?redirect=%2F",
     githubUrl: "https://github.com/Joshclxx/POS-System",
@@ -21,6 +21,32 @@ const projects = [
     image: "/images/card-again.png",
     technologies: ["Webflow"],
     liveUrl: "https://cardagain-d79530.webflow.io/sign-in",
+  },
+  {
+    title: "School Management System",
+    description:
+      "Built the frontend of a non-financial school management information system, ensuring responsive design and optimized performance.",
+    image: "/images/sms.png",
+    technologies: [
+      "React Native",
+      "TypeScript",
+      "React Navigation",
+      "Zustand",
+      "Expo",
+    ],
+  },
+  {
+    title: "Thrift Market Mobile App",
+    description:
+      "Built the frontend of a thrift market mobile application, ensuring responsive design and optimized performance.",
+    image: "/images/thrift.png",
+    technologies: [
+      "React Native",
+      "TypeScript",
+      "React Navigation",
+      "Zustand",
+      "Expo",
+    ],
   },
 ];
 

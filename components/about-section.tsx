@@ -46,9 +46,7 @@ export function AboutSection() {
                     <h4 className="font-semibold text-lg mb-2 text-primary">
                       Experience
                     </h4>
-                    <p className="text-2xl font-bold text-accent">
-                      Learning & Growing
-                    </p>
+                    <p className="text-2xl font-bold text-accent">1+</p>
                     <p className="text-sm text-muted-foreground">
                       Currently Studying Frontend Development
                     </p>
@@ -63,7 +61,7 @@ export function AboutSection() {
                     <h4 className="font-semibold text-lg mb-2 text-primary">
                       Projects
                     </h4>
-                    <p className="text-2xl font-bold text-accent">2</p>
+                    <p className="text-2xl font-bold text-accent">4</p>
                     <p className="text-sm text-muted-foreground">
                       Completed Successfully
                     </p>
