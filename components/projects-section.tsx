@@ -9,7 +9,14 @@ const projects = [
     description:
       "A modern web-based Point of Sale (POS) system built with Next.js, featuring real-time inventory management, seamless payment integration, and an intuitive admin dashboard.",
     image: "/images/pos.png",
-    technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+    technologies: [
+      "Next JS",
+      "TypeScript",
+      "Tailwind CSS",
+      "Zustand",
+      "Vercel",
+      "Git",
+    ],
     liveUrl:
       "https://pos-system-git-josh-joshuas-projects-a95d0abd.vercel.app/login?redirect=%2F",
     githubUrl: "https://github.com/Joshclxx/POS-System",
@@ -46,8 +53,16 @@ const projects = [
       "TypeScript",
       "React Navigation",
       "Zustand",
+      "Git",
       "Expo",
     ],
+  },
+  {
+    title: "Palabooks",
+    description:
+      "Palabooks is a modern web app designed for discovering new stories and showcasing the creativity of emerging writers.",
+    image: "/images/palabooks.png",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Git"],
   },
 ];
 
