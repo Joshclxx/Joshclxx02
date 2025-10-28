@@ -30,6 +30,13 @@ const certifications = [
     logo: "/images/ui-path-business.png",
     pdf: "/pdf/Uipath-Business.pdf",
   },
+  {
+    title: "Associate Data Analyst",
+    issuer: "DataCamp",
+    date: "2025",
+    logo: "/images/ada.png",
+    pdf: "https://www.datacamp.com/certificate/DAA0018643506806",
+  },
 ];
 
 export function CertificationsSection() {
