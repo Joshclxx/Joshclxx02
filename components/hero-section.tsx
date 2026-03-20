@@ -6,84 +6,66 @@ import Image from "next/image";
 import Link from "next/link";
 
 export function HeroSection() {
-  const to = "joshclxx02@gmail.com";
-  const subject = encodeURIComponent("Hello Josh");
-  const body = encodeURIComponent(
-    "Hi Josh,\n\nI’d like to get in touch about..."
-  );
-
   return (
     <section
       id="hero"
       className="min-h-screen pt-20 flex items-center justify-center relative overflow-hidden"
     >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-20" />
-
-      {/* Decorative background objects */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Floating squares */}
-        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-accent/30 rotate-45 animate-float" />
-        <div
-          className="absolute top-64 right-32 w-16 h-16 border border-secondary/50 rotate-12 animate-float"
-          style={{ animationDelay: "1.5s" }}
-        />
-
-        {/* Glowing circles */}
-        <div
-          className="absolute bottom-20 right-10 w-24 h-24 bg-gradient-to-br from-primary/30 to-accent/20 rounded-full blur-2xl animate-float"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute top-1/3 left-1/4 w-12 h-12 bg-secondary/30 rounded-full animate-float"
-          style={{ animationDelay: "2s" }}
-        />
-
-        {/* Star-like shape */}
-        <div className="absolute top-1/2 right-1/3 w-3 h-3 bg-accent rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)] animate-pulse" />
-
-        {/* Abstract blob */}
-        <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-gradient-to-r from-accent/20 to-secondary/10 rounded-[50%] blur-3xl animate-float-slow" />
+      {/* Subtle radial gradient background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-primary/3 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center">
+        <div className="text-center max-w-3xl mx-auto">
           {/* Profile Image */}
-          <div className="mb-8 flex justify-center">
+          <div className="mb-10 flex justify-center animate-fade-in-up">
             <div className="relative">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-accent shadow-2xl animate-glow">
+              <div className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden relative ring-4 ring-primary/20 ring-offset-4 ring-offset-background shadow-2xl transition-all duration-700 hover:ring-primary/40">
+                {/* Dark mode image (default) */}
                 <Image
                   src="/images/josh-profile.png"
-                  alt="Profile"
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-cover"
+                  alt="Joshua Colobong — Frontend Developer"
+                  width={176}
+                  height={176}
+                  priority
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out profile-dark"
                 />
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                <div className="w-3 h-3 bg-background rounded-full animate-pulse" />
+                {/* Light mode image */}
+                <Image
+                  src="/images/josh-profile-light.png"
+                  alt="Joshua Colobong — Frontend Developer"
+                  width={176}
+                  height={176}
+                  priority
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out profile-light"
+                />
               </div>
             </div>
           </div>
 
-          {/* Name and Title */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 text-balance">
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              Joshua Colobong
-            </span>
+          {/* Name */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 animate-fade-in-up delay-100 tracking-tight">
+            Joshua Colobong
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 text-balance">
-            Frontend Developer
-          </p>
+          {/* Role badge */}
+          <div className="animate-fade-in-up delay-200 mb-8">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20" style={{ fontFamily: 'var(--font-display), sans-serif' }}>
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              Frontend Developer
+            </span>
+          </div>
 
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto text-pretty">
-            Using React, Next.js & Tailwind CSS to deliver clean, accessible,
-            and high-performing frontend solutions.
+          {/* Tagline */}
+          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto text-pretty leading-relaxed animate-fade-in-up delay-300">
+            Building clean, accessible, and high-performing frontend solutions
+            with React, Next.js & Tailwind CSS.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-14 animate-fade-in-up delay-400">
             <Link
               href="/pdf/Joshclxx_CV.pdf"
               target="_blank"
@@ -91,7 +73,7 @@ export function HeroSection() {
             >
               <Button
                 size="lg"
-                className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 animate-glow"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 px-8 h-12 text-base"
               >
                 <Download className="mr-2 h-5 w-5" />
                 Download CV
@@ -101,7 +83,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 bg-transparent"
+              className="border-border text-foreground hover:bg-muted hover:border-primary/30 transition-all duration-300 bg-transparent px-8 h-12 text-base"
               onClick={() => {
                 const contactSection = document.getElementById("contact");
                 if (contactSection) {
@@ -115,22 +97,22 @@ export function HeroSection() {
           </div>
 
           {/* Social Links */}
-          <div className="flex justify-center space-x-6">
+          <div className="flex justify-center space-x-4 animate-fade-in-up delay-500">
             <a
               href="https://github.com/Joshclxx"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-110 transform"
+              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
             >
-              <Github className="h-6 w-6" />
+              <Github className="h-5 w-5" />
             </a>
             <a
               href="https://www.linkedin.com/in/Joshclxx"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-110 transform"
+              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
             >
-              <Linkedin className="h-6 w-6" />
+              <Linkedin className="h-5 w-5" />
             </a>
           </div>
         </div>

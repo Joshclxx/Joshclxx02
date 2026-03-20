@@ -6,18 +6,28 @@ import { CertificationsSection } from "@/components/certifications-section";
 import { ServicesSection } from "@/components/services-section";
 import { ContactSection } from "@/components/contact-section";
 import { Navigation } from "@/components/navigation";
+import { CustomCursor } from "@/components/custom-cursor";
 
 export default function Portfolio() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background relative">
+      {/* Ambient background gradient */}
+      <div className="gradient-mesh" />
+
+      {/* Custom cursor */}
+      <CustomCursor />
+
       <Navigation />
-      <HeroSection />
-      <AboutSection />
-      <TechStackSection />
-      <ProjectsSection />
-      <CertificationsSection />
-      <ServicesSection />
-      <ContactSection />
+
+      <div className="relative z-10">
+        <HeroSection />
+        <AboutSection />
+        <TechStackSection />
+        <ProjectsSection />
+        <CertificationsSection />
+        <ServicesSection />
+        <ContactSection />
+      </div>
     </main>
   );
 }

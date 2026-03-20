@@ -17,6 +17,7 @@ import {
   SiTailwindcss,
   SiWebflow,
 } from "react-icons/si";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const frameworksAndRuntime = [
   {
@@ -26,7 +27,7 @@ const frameworksAndRuntime = [
   {
     name: "Next.js",
     icon: (
-      <SiNextdotjs className="text-black dark:text-white text-4xl sm:text-5xl md:text-6xl" />
+      <SiNextdotjs className="text-foreground text-4xl sm:text-5xl md:text-6xl" />
     ),
   },
   {
@@ -83,7 +84,7 @@ const toolsAndCollab = [
   {
     name: "GitHub",
     icon: (
-      <FaGithub className="text-gray-800 text-4xl sm:text-5xl md:text-6xl" />
+      <FaGithub className="text-foreground text-4xl sm:text-5xl md:text-6xl" />
     ),
   },
   {
@@ -116,55 +117,66 @@ const toolsAndCollab = [
 
 export function TechStackSection() {
   return (
-    <section id="tech-stack" className="py-16 sm:py-20">
+    <section id="tech-stack" className="py-24 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 sm:mb-12">
-            Tech <span className="text-accent">Stack</span>
-          </h2>
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                Tech <span className="text-primary">Stack</span>
+              </h2>
+              <div className="w-12 h-0.5 bg-primary rounded-full mx-auto" />
+            </div>
+          </ScrollReveal>
 
           {/* Two rows of sliders */}
-          <div className="flex flex-col gap-8 sm:gap-12">
-            {/* Row 1 - Frameworks & Runtime */}
-            <Slider
-              width="140px"
-              duration={25}
-              pauseOnHover={true}
-              blurBorders={false}
-              blurBorderColor={"#27e6ec"}
-            >
-              {frameworksAndRuntime.map((tech) => (
-                <Slider.Slide key={tech.name}>
-                  <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
-                    {tech.icon}
-                    <span className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg font-semibold text-foreground">
-                      {tech.name}
-                    </span>
-                  </div>
-                </Slider.Slide>
-              ))}
-            </Slider>
+          <ScrollReveal delay={100}>
+            <div className="flex flex-col gap-8 sm:gap-12">
+              {/* Row 1 - Frameworks & Runtime */}
+              <Slider
+                width="140px"
+                duration={25}
+                pauseOnHover={true}
+                blurBorders={false}
+                blurBorderColor={"#2563EB"}
+              >
+                {frameworksAndRuntime.map((tech) => (
+                  <Slider.Slide key={tech.name}>
+                    <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 group">
+                      <div className="group-hover:scale-110 transition-transform duration-300">
+                        {tech.icon}
+                      </div>
+                      <span className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg font-semibold text-foreground">
+                        {tech.name}
+                      </span>
+                    </div>
+                  </Slider.Slide>
+                ))}
+              </Slider>
 
-            {/* Row 2 - Tools & Collaboration */}
-            <Slider
-              width="140px"
-              duration={15}
-              pauseOnHover={true}
-              blurBorders={false}
-              blurBorderColor={"#fff"}
-            >
-              {toolsAndCollab.map((tool) => (
-                <Slider.Slide key={tool.name}>
-                  <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
-                    {tool.icon}
-                    <span className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg font-semibold text-foreground">
-                      {tool.name}
-                    </span>
-                  </div>
-                </Slider.Slide>
-              ))}
-            </Slider>
-          </div>
+              {/* Row 2 - Tools & Collaboration */}
+              <Slider
+                width="140px"
+                duration={15}
+                pauseOnHover={true}
+                blurBorders={false}
+                blurBorderColor={"#fff"}
+              >
+                {toolsAndCollab.map((tool) => (
+                  <Slider.Slide key={tool.name}>
+                    <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 group">
+                      <div className="group-hover:scale-110 transition-transform duration-300">
+                        {tool.icon}
+                      </div>
+                      <span className="mt-2 sm:mt-3 md:mt-4 text-sm sm:text-base md:text-lg font-semibold text-foreground">
+                        {tool.name}
+                      </span>
+                    </div>
+                  </Slider.Slide>
+                ))}
+              </Slider>
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
