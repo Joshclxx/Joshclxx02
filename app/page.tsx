@@ -7,6 +7,7 @@ import { ServicesSection } from "@/components/services-section";
 import { ContactSection } from "@/components/contact-section";
 import { Navigation } from "@/components/navigation";
 import { CustomCursor } from "@/components/custom-cursor";
+import { ShakeToContact } from "@/components/shake-to-contact";
 
 export default function Portfolio() {
   return (
@@ -16,6 +17,9 @@ export default function Portfolio() {
 
       {/* Custom cursor */}
       <CustomCursor />
+
+      {/* Mobile shake-to-contact feature */}
+      <ShakeToContact />
 
       <Navigation />
 
