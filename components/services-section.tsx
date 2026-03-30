@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code, CheckCircle, Smartphone, GitBranch } from "lucide-react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
@@ -8,67 +7,73 @@ const services = [
     title: "Frontend Development",
     description:
       "Building responsive, performant web applications using modern frameworks like React, Next.js, and Tailwind CSS.",
+    color: "var(--gh-accent-blue)",
   },
   {
     icon: Smartphone,
     title: "Responsive UI",
     description:
       "Pixel-perfect layouts tailored for mobile, tablet, and desktop views with fluid design systems.",
+    color: "var(--gh-accent-green)",
   },
   {
     icon: CheckCircle,
     title: "Quality Assurance",
     description:
       "Testing and reviewing work to ensure consistency, usability, and reliable performance across devices.",
+    color: "var(--gh-accent-purple)",
   },
   {
     icon: GitBranch,
     title: "Version Control",
     description:
       "Using Git and GitHub to manage code, track changes, and collaborate effectively in team projects.",
+    color: "var(--gh-accent-orange)",
   },
 ];
 
 export function ServicesSection() {
   return (
-    <section id="services" className="py-24 relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Title */}
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                My <span className="text-primary">Services</span>
-              </h2>
-              <div className="w-12 h-0.5 bg-primary rounded-full mx-auto" />
-            </div>
-          </ScrollReveal>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service, index) => {
-              const IconComponent = service.icon;
-              return (
-                <ScrollReveal key={service.title} delay={index * 100}>
-                  <Card className="group text-center border-border/50 hover:border-primary/20 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 card-glow h-full">
-                    <CardHeader className="pb-2">
-                      <div className="mx-auto w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 group-hover:scale-110 transition-all duration-300">
-                        <IconComponent className="h-6 w-6 text-primary" />
-                      </div>
-                      <CardTitle className="text-base font-semibold text-foreground">
-                        {service.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {service.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </ScrollReveal>
-              );
-            })}
-          </div>
+    <section id="services" className="py-8">
+      {/* Section header */}
+      <ScrollReveal>
+        <div className="gh-section-heading text-base">
+          <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8.878.392a1.75 1.75 0 0 0-1.756 0l-5.25 3.045A1.75 1.75 0 0 0 1 4.951v6.098c0 .624.332 1.2.872 1.514l5.25 3.045a1.75 1.75 0 0 0 1.756 0l5.25-3.045c.54-.313.872-.89.872-1.514V4.951c0-.624-.332-1.2-.872-1.514ZM7.875 1.69a.25.25 0 0 1 .25 0l4.63 2.685L8 7.133 3.245 4.375ZM2.5 5.677l5 2.901v5.088l-4.75-2.754a.25.25 0 0 1-.25-.217ZM8.5 13.665V8.578l5-2.901v5.37a.25.25 0 0 1-.125.217Z" />
+          </svg>
+          Packages & Services
         </div>
+      </ScrollReveal>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        {services.map((service, index) => {
+          const IconComponent = service.icon;
+          return (
+            <ScrollReveal key={service.title} delay={index * 80}>
+              <div className="repo-card group hover:border-[var(--gh-text-secondary)]">
+                <div className="flex items-start gap-3">
+                  <div
+                    className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `color-mix(in srgb, ${service.color} 15%, transparent)` }}
+                  >
+                    <IconComponent
+                      className="h-4.5 w-4.5"
+                      style={{ color: service.color }}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          );
+        })}
       </div>
     </section>
   );

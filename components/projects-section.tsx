@@ -1,8 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Github } from "lucide-react";
 import Image from "next/image";
 import { ScrollReveal } from "@/components/scroll-reveal";
+
+const techColors: Record<string, string> = {
+  "Next JS":       "#e6edf3",
+  "TypeScript":    "#3178c6",
+  "Tailwind CSS":  "#06b6d4",
+  "Zustand":       "#433e38",
+  "Vercel":        "#e6edf3",
+  "Git":           "#f05032",
+  "Webflow":       "#4353ff",
+  "React":         "#61dafb",
+  "React Native":  "#61dafb",
+  "React Navigation": "#61dafb",
+  "Expo":          "#000020",
+};
 
 const projects = [
   {
@@ -18,9 +29,11 @@ const projects = [
       "Vercel",
       "Git",
     ],
+    primaryLang: "TypeScript",
     liveUrl:
       "https://pos-system-git-josh-joshuas-projects-a95d0abd.vercel.app/login?redirect=%2F",
     githubUrl: "https://github.com/Joshclxx/POS-System",
+    stars: 2,
   },
   {
     title: "Card Again",
@@ -28,7 +41,9 @@ const projects = [
       "Teamed up to build a responsive e-commerce platform for Pokemon Cards, focusing on user dashboard, membership features, and performance.",
     image: "/images/card-again.png",
     technologies: ["Webflow"],
+    primaryLang: "Webflow",
     liveUrl: "https://cardagain-d79530.webflow.io/sign-in",
+    stars: 1,
   },
   {
     title: "School Management System",
@@ -43,6 +58,8 @@ const projects = [
       "Vercel",
       "Git",
     ],
+    primaryLang: "TypeScript",
+    stars: 3,
   },
   {
     title: "Thrift Market Mobile App",
@@ -57,6 +74,8 @@ const projects = [
       "Git",
       "Expo",
     ],
+    primaryLang: "TypeScript",
+    stars: 1,
   },
   {
     title: "Palabooks",
@@ -64,103 +83,122 @@ const projects = [
       "Palabooks is a modern web app designed for discovering new stories and showcasing the creativity of emerging writers.",
     image: "/images/palabooks.png",
     technologies: ["React", "TypeScript", "Tailwind CSS", "Git"],
+    primaryLang: "TypeScript",
+    stars: 2,
   },
 ];
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Title */}
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                Featured <span className="text-primary">Projects</span>
-              </h2>
-              <div className="w-12 h-0.5 bg-primary rounded-full mx-auto" />
+    <section id="projects" className="py-8">
+      {/* Section header — GitHub style */}
+      <ScrollReveal>
+        <div className="gh-section-heading text-base">
+          <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+          </svg>
+          Pinned Repositories
+          <span className="gh-counter">{projects.length}</span>
+        </div>
+      </ScrollReveal>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        {projects.map((project, index) => (
+          <ScrollReveal key={project.title} delay={index * 80}>
+            <div className="repo-card h-full">
+              {/* Repo header */}
+              <div className="flex items-start gap-2">
+                <svg className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {project.githubUrl || project.liveUrl ? (
+                      <a
+                        href={project.githubUrl || project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gh-link text-sm font-semibold truncate"
+                      >
+                        {project.title}
+                      </a>
+                    ) : (
+                      <span className="gh-link text-sm font-semibold truncate">
+                        {project.title}
+                      </span>
+                    )}
+                    <span className="gh-badge text-[10px] py-0">Public</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                {project.description}
+              </p>
+
+              {/* Preview image — subtle, small */}
+              <div className="relative overflow-hidden rounded-md border border-[var(--gh-border)] mt-1">
+                <Image
+                  src={project.image || "/placeholder.svg"}
+                  alt={project.title}
+                  width={600}
+                  height={300}
+                  className="w-full h-32 object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+                />
+              </div>
+
+              {/* Footer — language + stars */}
+              <div className="flex items-center gap-4 mt-auto pt-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className="lang-dot w-3 h-3"
+                    style={{ backgroundColor: techColors[project.primaryLang] || "#8b949e" }}
+                  />
+                  {project.primaryLang}
+                </span>
+
+                {/* Star count (decorative) */}
+                <span className="flex items-center gap-1">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+                  </svg>
+                  {project.stars}
+                </span>
+
+                {/* Links */}
+                <div className="flex items-center gap-2 ml-auto">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[var(--gh-accent-blue)] transition-colors flex items-center gap-1"
+                    >
+                      <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5Zm5.22-.53L14 2.97v3.28a.75.75 0 0 0 1.5 0V1.75a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h3.28l-4.03 4.03a.75.75 0 0 0 1.06 1.06Z" />
+                      </svg>
+                      Live
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[var(--gh-accent-blue)] transition-colors flex items-center gap-1"
+                    >
+                      <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
+                      </svg>
+                      Code
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
           </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <ScrollReveal key={project.title} delay={index * 100}>
-                <Card className="group overflow-hidden border-border/50 hover:border-primary/20 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 card-glow h-full">
-                  {/* Image */}
-                  <div className="relative overflow-hidden">
-                    <Image
-                      src={project.image || "/placeholder.svg"}
-                      alt={project.title}
-                      width={600}
-                      height={340}
-                      className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <div className="flex space-x-2">
-                        {project.liveUrl && (
-                          <Button
-                            size="sm"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
-                            asChild
-                          >
-                            <a
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5 mr-1" />
-                              Live
-                            </a>
-                          </Button>
-                        )}
-                        {project.githubUrl && (
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            className="bg-white/90 text-black hover:bg-white shadow-lg"
-                            asChild
-                          >
-                            <a
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Github className="h-3.5 w-3.5 mr-1" />
-                              Code
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg font-semibold text-foreground">
-                      {project.title}
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2.5 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-md"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );

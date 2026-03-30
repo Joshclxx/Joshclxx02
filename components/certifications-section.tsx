@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -43,58 +42,54 @@ const certifications = [
 
 export function CertificationsSection() {
   return (
-    <section id="certifications" className="py-24 relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Section Title */}
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                <span className="text-primary">Certifications</span>
-              </h2>
-              <div className="w-12 h-0.5 bg-primary rounded-full mx-auto" />
-            </div>
-          </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {certifications.map((cert, index) => (
-              <ScrollReveal key={cert.title} delay={index * 80}>
-                <a
-                  href={cert.pdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
-                >
-                  <Card className="h-full border-border/50 hover:border-primary/20 shadow-md hover:shadow-lg transition-all duration-300 border-l-2 border-l-primary/40 hover:border-l-primary card-glow">
-                    <CardContent className="p-5 flex items-center gap-4">
-                      <div className="flex-shrink-0">
-                        <Image
-                          src={cert.logo || "/placeholder.svg"}
-                          alt={`${cert.issuer} logo`}
-                          width={64}
-                          height={64}
-                          className="rounded-lg group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="flex-grow min-w-0">
-                        <h3 className="font-semibold text-sm text-foreground mb-1 leading-snug">
-                          {cert.title}
-                        </h3>
-                        <p className="text-muted-foreground text-xs mb-1">
-                          {cert.issuer}
-                        </p>
-                        <p className="text-xs text-primary font-medium">
-                          {cert.date}
-                        </p>
-                      </div>
-                      <ExternalLink className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary flex-shrink-0 transition-colors duration-300" />
-                    </CardContent>
-                  </Card>
-                </a>
-              </ScrollReveal>
-            ))}
-          </div>
+    <section id="certifications" className="py-8">
+      {/* Section header */}
+      <ScrollReveal>
+        <div className="gh-section-heading text-base">
+          <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z" />
+          </svg>
+          Achievements & Certifications
+          <span className="gh-counter">{certifications.length}</span>
         </div>
+      </ScrollReveal>
+
+      {/* Certification list — GitHub timeline style */}
+      <div className="space-y-px">
+        {certifications.map((cert, index) => (
+          <ScrollReveal key={cert.title} delay={index * 60}>
+            <a
+              href={cert.pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-4 px-4 py-3 rounded-md hover:bg-[var(--gh-bg-secondary)] transition-colors"
+            >
+              {/* Cert logo */}
+              <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden border border-[var(--gh-border)]">
+                <Image
+                  src={cert.logo || "/placeholder.svg"}
+                  alt={`${cert.issuer} logo`}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Cert info */}
+              <div className="flex-grow min-w-0">
+                <h3 className="text-sm font-medium text-foreground group-hover:text-[var(--gh-accent-blue)] transition-colors line-clamp-2 leading-snug">
+                  {cert.title}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {cert.issuer} · {cert.date}
+                </p>
+              </div>
+
+              {/* External link icon */}
+              <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground flex-shrink-0 transition-colors" />
+            </a>
+          </ScrollReveal>
+        ))}
       </div>
     </section>
   );
