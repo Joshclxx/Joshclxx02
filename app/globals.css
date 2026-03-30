@@ -372,6 +372,153 @@
   opacity: 1;
 }
 
+/* ── Profile Picture Premium Animations ── */
+
+/* Rotating gradient ring */
+@keyframes profileRingSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pulsing status glow */
+@keyframes profilePulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(63, 185, 80, 0.4),
+      0 0 0 0 rgba(63, 185, 80, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 20px 4px rgba(63, 185, 80, 0.25),
+      0 0 40px 8px rgba(63, 185, 80, 0.08);
+  }
+}
+
+.light .profile-avatar-wrapper {
+  --ring-c1: #0969da;
+  --ring-c2: #8250df;
+  --ring-c3: #1a7f37;
+  --ring-c4: #0969da;
+}
+
+/* Wave animation for 👋 badge */
+@keyframes profileWave {
+  0%           { transform: rotate(0deg); }
+  10%          { transform: rotate(14deg); }
+  20%          { transform: rotate(-8deg); }
+  30%          { transform: rotate(14deg); }
+  40%          { transform: rotate(-4deg); }
+  50%          { transform: rotate(10deg); }
+  60%          { transform: rotate(0deg); }
+  100%         { transform: rotate(0deg); }
+}
+
+/* Floating bob */
+@keyframes profileFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Container that holds the rotating ring + avatar */
+.profile-avatar-wrapper {
+  --ring-c1: #58a6ff;
+  --ring-c2: #bc8cff;
+  --ring-c3: #3fb950;
+  --ring-c4: #58a6ff;
+  position: relative;
+  border-radius: 50%;
+  isolation: isolate; /* Creates stacking context so z-index:-1 stays visible */
+  animation: profileFloat 6s ease-in-out infinite;
+}
+
+/* Rotating gradient ring — pseudo-element behind the avatar */
+.profile-avatar-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--ring-c1),
+    var(--ring-c2),
+    var(--ring-c3),
+    var(--ring-c4)
+  );
+  animation: profileRingSpin 4s linear infinite;
+  z-index: -1;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, inset 0.3s ease;
+}
+
+/* Intensify ring on hover */
+.profile-avatar-wrapper:hover::before {
+  opacity: 1;
+  inset: -5px;
+  animation-duration: 2s;
+}
+
+/* Pulsing glow layer */
+.profile-avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  animation: profilePulse 3s ease-in-out infinite;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Avatar inner circle hover zoom */
+.profile-avatar-inner {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.4s ease;
+}
+
+.profile-avatar-wrapper:hover .profile-avatar-inner {
+  transform: scale(1.04);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.light .profile-avatar-wrapper:hover .profile-avatar-inner {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Speech bubble animation */
+@keyframes bubblePopIn {
+  0%   { opacity: 0; transform: scale(0.5) translateY(8px); }
+  60%  { opacity: 1; transform: scale(1.05) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.profile-speech-bubble {
+  animation: bubblePopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* ── Contribution Graph Animations ── */
+
+.graph-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Graph card pulsing border glow */
+@keyframes graphCardGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(63, 185, 80, 0);
+  }
+  50% {
+    box-shadow:
+      0 0 8px 1px rgba(63, 185, 80, 0.12),
+      inset 0 0 6px 0 rgba(63, 185, 80, 0.04);
+  }
+}
+
+/* Apply glow to the gh-card containing the graph */
+.gh-card:has(.graph-container) {
+  animation: graphCardGlow 4s ease-in-out infinite;
+}
+
 /* ── Custom scrollbar (GitHub-like) ── */
 ::-webkit-scrollbar {
   width: 8px;

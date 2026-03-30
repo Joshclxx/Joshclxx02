@@ -7,6 +7,18 @@ import Link from "next/link";
 
 export function HeroSection() {
   const [isDark, setIsDark] = useState(true);
+  const [bubbleIndex, setBubbleIndex] = useState(0);
+  const [bubbleVisible, setBubbleVisible] = useState(true);
+
+  const bubbleMessages = [
+    "Hi there! 👋",
+    "Welcome! ✨",
+    "Let's build! 🚀",
+    "Hire me! 💼",
+    "React lover 💙",
+    "Coffee first ☕",
+    "Pixel perfect 🎯",
+  ];
 
   useEffect(() => {
     const check = () =>
@@ -20,12 +32,25 @@ export function HeroSection() {
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Fade out
+      setBubbleVisible(false);
+      // After fade-out, change message and fade in
+      setTimeout(() => {
+        setBubbleIndex((prev) => (prev + 1) % bubbleMessages.length);
+        setBubbleVisible(true);
+      }, 300);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [bubbleMessages.length]);
+
   return (
     <section id="hero" className="animate-fade-in-up">
       {/* Profile Image */}
       <div className="mb-4 flex lg:justify-start justify-center">
-        <div className="relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
-          <div className="w-full h-full rounded-full overflow-hidden border border-[var(--gh-border)] shadow-sm">
+        <div className="profile-avatar-wrapper relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
+          <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
             <Image
               src="/images/josh-profile.png"
               alt="Joshua Colobong"
@@ -43,15 +68,33 @@ export function HeroSection() {
               className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 profile-light"
             />
           </div>
-          {/* Hand wave badge — bottom-right, covers Gemini sparkle */}
+          {/* Speech bubble — cycles through messages */}
           <div
-            className="absolute bottom-2 right-2 w-[34px] h-[34px] lg:w-[38px] lg:h-[38px] rounded-full flex items-center justify-center shadow-md border-[2.5px] transition-colors duration-300"
-            style={{
-              backgroundColor: isDark ? "#ffffff" : "#24292f",
-              borderColor: isDark ? "#ffffff" : "#24292f",
-            }}
+            className={`profile-speech-bubble absolute -top-2 -right-4 sm:-right-6 lg:-right-8 z-10 transition-all duration-300 ${
+              bubbleVisible
+                ? "opacity-100 scale-100 translate-y-0"
+                : "opacity-0 scale-90 translate-y-1"
+            }`}
           >
-            <span className="text-lg lg:text-xl leading-none select-none">👋</span>
+            <div
+              className="relative px-3 py-1.5 rounded-2xl shadow-lg text-xs sm:text-sm font-medium whitespace-nowrap select-none"
+              style={{
+                backgroundColor: isDark ? "#30363d" : "#ffffff",
+                color: isDark ? "#e6edf3" : "#1f2328",
+                border: `1px solid ${isDark ? "#484f58" : "#d0d7de"}`,
+              }}
+            >
+              {bubbleMessages[bubbleIndex]}
+              {/* Bubble tail */}
+              <div
+                className="absolute -bottom-1.5 left-5 w-3 h-3 rotate-45"
+                style={{
+                  backgroundColor: isDark ? "#30363d" : "#ffffff",
+                  borderRight: `1px solid ${isDark ? "#484f58" : "#d0d7de"}`,
+                  borderBottom: `1px solid ${isDark ? "#484f58" : "#d0d7de"}`,
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
