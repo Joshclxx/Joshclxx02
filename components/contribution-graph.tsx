@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { InteractiveGraph } from "@/components/interactive-graph";
 import type { GitHubUser, GitHubRepo } from "@/lib/github";
 
 const USERNAME = "Joshclxx";
@@ -46,11 +47,6 @@ export function ContributionGraph() {
     ...new Set(repos.map((r) => r.language).filter(Boolean)),
   ].slice(0, 4);
 
-  // Activity graph URL — theme-aware
-  const activityGraphUrl = isDark
-    ? `https://github-readme-activity-graph.vercel.app/graph?username=${USERNAME}&bg_color=0d1117&color=8b949e&line=3fb950&point=3fb950&area_color=3fb950&area=true&hide_border=true&radius=4`
-    : `https://github-readme-activity-graph.vercel.app/graph?username=${USERNAME}&bg_color=f6f8fa&color=57606a&line=2da44e&point=2da44e&area_color=2da44e&area=true&hide_border=true&radius=4`;
-
   // Streak stats URL — theme-aware
   const streakUrl = isDark
     ? `https://github-readme-streak-stats.herokuapp.com/?user=${USERNAME}&theme=github-dark&hide_border=true&background=0d1117&stroke=30363d&ring=3fb950&fire=f78166&currStreakLabel=e6edf3&dates=8b949e&sideNums=e6edf3&sideLabels=8b949e`
@@ -82,20 +78,12 @@ export function ContributionGraph() {
         </div>
 
         <div className="gh-card overflow-hidden">
-          {/* Activity graph — full width */}
+          {/* Activity graph — interactive with hover tooltips */}
           <div className="p-4 pb-3">
             <p className="text-xs text-muted-foreground mb-2 font-medium">
               Contribution Graph
             </p>
-            <div className="overflow-x-auto rounded-md">
-              <img
-                key={`activity-${isDark}`}
-                src={activityGraphUrl}
-                alt={`${USERNAME}'s GitHub Activity Graph`}
-                className="w-full h-auto rounded-md block"
-                style={{ minHeight: "160px" }}
-              />
-            </div>
+            <InteractiveGraph isDark={isDark} />
           </div>
 
           <div className="border-t border-[var(--gh-border)]" />
@@ -162,7 +150,7 @@ export function ContributionGraph() {
                         <span className="text-xs">{stat.label}</span>
                       </div>
                       <span className="text-sm font-semibold text-foreground tabular-nums">
-                        {stat.value.toLocaleString()}
+                        {(stat.value ?? 0).toLocaleString()}
                       </span>
                     </div>
                   ))}
