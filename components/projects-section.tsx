@@ -105,9 +105,9 @@ export function ProjectsSection() {
       <div className="grid md:grid-cols-2 gap-4">
         {projects.map((project, index) => (
           <ScrollReveal key={project.title} delay={index * 80}>
-            <div className="repo-card h-full">
+            <div className="repo-card flex flex-col" style={{ height: '268px' }}>
               {/* Repo header */}
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-2 flex-shrink-0">
                 <svg className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
                 </svg>
@@ -133,23 +133,23 @@ export function ProjectsSection() {
               </div>
 
               {/* Description */}
-              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 flex-shrink-0">
                 {project.description}
               </p>
 
-              {/* Preview image — subtle, small */}
-              <div className="relative overflow-hidden rounded-md border border-[var(--gh-border)] mt-1">
+              {/* Preview image — fills remaining space */}
+              <div className="relative overflow-hidden rounded-md border border-[var(--gh-border)] mt-1 flex-1 min-h-0">
                 <Image
                   src={project.image || "/placeholder.svg"}
                   alt={project.title}
                   width={600}
                   height={300}
-                  className="w-full h-32 object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
                 />
               </div>
 
               {/* Footer — language + stars */}
-              <div className="flex items-center gap-4 mt-auto pt-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-4 mt-auto pt-2 text-xs text-muted-foreground flex-shrink-0">
                 <span className="flex items-center gap-1.5">
                   <span
                     className="lang-dot w-3 h-3"
