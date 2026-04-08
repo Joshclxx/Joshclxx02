@@ -1,4 +1,5 @@
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { TypewriterText } from "@/components/typewriter-text";
 
 export function AboutSection() {
   return (
@@ -16,10 +17,10 @@ export function AboutSection() {
 
           {/* README content — markdown-like styling */}
           <div className="p-6 md:p-8">
-            {/* Heading */}
+            {/* Heading with typewriter animation */}
             <div className="flex items-center gap-3 mb-6 pb-2 border-b border-[var(--gh-border)]">
               <h2 className="text-2xl font-semibold text-foreground">
-                Hi there 👋
+                <TypewriterText text="Hi there 👋" speed={60} delay={400} />
               </h2>
             </div>
 
@@ -46,22 +47,26 @@ export function AboutSection() {
                 <h3 className="text-base font-semibold text-foreground mb-3">
                   ⚡ Quick Facts
                 </h3>
-                <ul className="space-y-1.5 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
                     <span>Currently studying & building <strong className="text-foreground font-medium">Frontend Development</strong> projects</span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
                     <span>Core strengths: <strong className="text-foreground font-medium">Frontend Development</strong> & <strong className="text-foreground font-medium">Responsive Design</strong></span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
                     <span>Open to new opportunities and collaborations</span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
-                    <span>Ask me about <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground">React</code> <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground">Next.js</code> <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground">TypeScript</code></span>
+                    <span>Ask me about{" "}
+                      <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">React</code>{" "}
+                      <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">Next.js</code>{" "}
+                      <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">TypeScript</code>
+                    </span>
                   </li>
                 </ul>
               </div>

@@ -1,0 +1,49 @@
+{
+  "permissions": ["allow"],
+  "allow": [
+    "Bash(yarn dev)",
+    "Bash(yarn build)",
+    "Bash(yarn lint)",
+    "Bash(yarn typecheck)",
+    "Bash(yarn verify)",
+    "Bash(yarn migrate *)",
+    "Bash(yarn seed)",
+    "Bash(yarn e2e*)",
+    "Bash(yarn sync-permissions)",
+    "Bash(yarn grant-admin)",
+    "Bash(git diff *)",
+    "Bash(git log *)",
+    "Bash(git status)",
+    "Bash(git add *)",
+    "Bash(git commit *)",
+    "Bash(npx tsc --noEmit)",
+    "Read(src/**)",
+    "Read(docs/**)",
+    "Read(configs/**)",
+    "Read(migrations/**)",
+    "Read(scripts/**)",
+    "Read(PROJECT_RULES.md)",
+    "Read(package.json)",
+    "Read(tsconfig.json)",
+    "Write(src/**)",
+    "Write(docs/**)",
+    "Write(migrations/**)",
+    "Write(scripts/**)"
+  ],
+  "model": "sonnet",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh .claude/hooks/pre-commit.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "theme": "dark",
+  "addedMcpServers": true
+}

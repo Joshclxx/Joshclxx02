@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, BadgeCheck } from "lucide-react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 const certifications = [
@@ -55,17 +55,17 @@ export function CertificationsSection() {
       </ScrollReveal>
 
       {/* Certification list — GitHub timeline style */}
-      <div className="space-y-px">
+      <div className="cert-timeline space-y-px">
         {certifications.map((cert, index) => (
           <ScrollReveal key={cert.title} delay={index * 60}>
             <a
               href={cert.pdf}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-4 px-4 py-3 rounded-md hover:bg-[var(--gh-bg-secondary)] transition-colors"
+              className="cert-timeline-item group flex items-center gap-4 px-4 py-3 rounded-md hover:bg-[var(--gh-bg-secondary)] transition-colors"
             >
               {/* Cert logo */}
-              <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden border border-[var(--gh-border)]">
+              <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden border border-[var(--gh-border)] transition-transform duration-200 group-hover:scale-110 z-10 bg-[var(--gh-bg-secondary)]">
                 <Image
                   src={cert.logo || "/placeholder.svg"}
                   alt={`${cert.issuer} logo`}
@@ -77,9 +77,12 @@ export function CertificationsSection() {
 
               {/* Cert info */}
               <div className="flex-grow min-w-0">
-                <h3 className="text-sm font-medium text-foreground group-hover:text-[var(--gh-accent-blue)] transition-colors line-clamp-2 leading-snug">
-                  {cert.title}
-                </h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-sm font-medium text-foreground group-hover:text-[var(--gh-accent-blue)] transition-colors line-clamp-2 leading-snug">
+                    {cert.title}
+                  </h3>
+                  <BadgeCheck className="h-3.5 w-3.5 text-[var(--gh-accent-green)] flex-shrink-0" />
+                </div>
                 <p className="text-xs text-muted-foreground">
                   {cert.issuer} · {cert.date}
                 </p>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Github, Linkedin, Download, Mail, MapPin, Building2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { MagneticHover } from "@/components/magnetic-hover";
 
 export function HeroSection() {
   const [isDark, setIsDark] = useState(true);
@@ -46,10 +47,10 @@ export function HeroSection() {
   }, [bubbleMessages.length]);
 
   return (
-    <section id="hero" className="animate-fade-in-up">
+    <section id="hero" className="hero-cascade">
       {/* Profile Image */}
       <div className="mb-4 flex lg:justify-start justify-center">
-        <div className="profile-avatar-wrapper relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
+        <div className="profile-avatar-wrapper relative w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
           <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
             <Image
               src="/images/josh-profile.png"
@@ -105,9 +106,19 @@ export function HeroSection() {
         <h1 className="text-2xl font-semibold text-foreground leading-tight">
           Joshua Colobong
         </h1>
-        <p className="text-xl font-light text-muted-foreground">
-          Joshclxx
-        </p>
+        <div className="flex items-center gap-2 justify-center lg:justify-start">
+          <p className="text-xl font-light text-muted-foreground">
+            Joshclxx
+          </p>
+          {/* GitHub-style status indicator */}
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[color-mix(in_srgb,var(--gh-accent-green)_12%,transparent)] border border-[color-mix(in_srgb,var(--gh-accent-green)_25%,transparent)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--gh-accent-green)] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--gh-accent-green)]" />
+            </span>
+            <span className="text-[10px] font-medium text-[var(--gh-accent-green)]">Available</span>
+          </span>
+        </div>
       </div>
 
       {/* Bio */}
@@ -160,27 +171,31 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Social links — GitHub style */}
+      {/* Social links — GitHub style with magnetic hover */}
       <div className="flex items-center gap-2 text-sm justify-center lg:justify-start">
-        <a
-          href="https://github.com/Joshclxx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-muted-foreground hover:text-[var(--gh-accent-blue)] transition-colors"
-        >
-          <Github className="h-4 w-4" />
-          <span>Joshclxx</span>
-        </a>
+        <MagneticHover>
+          <a
+            href="https://github.com/Joshclxx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-link-animated flex items-center gap-1.5 text-muted-foreground hover:text-[var(--gh-accent-blue)]"
+          >
+            <Github className="h-4 w-4" />
+            <span>Joshclxx</span>
+          </a>
+        </MagneticHover>
         <span className="text-muted-foreground">·</span>
-        <a
-          href="https://www.linkedin.com/in/Joshclxx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-muted-foreground hover:text-[var(--gh-accent-blue)] transition-colors"
-        >
-          <Linkedin className="h-4 w-4" />
-          <span>LinkedIn</span>
-        </a>
+        <MagneticHover>
+          <a
+            href="https://www.linkedin.com/in/Joshclxx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-link-animated flex items-center gap-1.5 text-muted-foreground hover:text-[var(--gh-accent-blue)]"
+          >
+            <Linkedin className="h-4 w-4" />
+            <span>LinkedIn</span>
+          </a>
+        </MagneticHover>
       </div>
 
       {/* Divider */}
@@ -192,15 +207,15 @@ export function HeroSection() {
           Highlights
         </h3>
         <div className="flex flex-wrap gap-1.5">
-          <span className="gh-badge">
+          <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-green)]" />
             Available for hire
           </span>
-          <span className="gh-badge">
+          <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-blue)]" />
             5 Projects
           </span>
-          <span className="gh-badge">
+          <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-purple)]" />
             1+ Years Exp
           </span>

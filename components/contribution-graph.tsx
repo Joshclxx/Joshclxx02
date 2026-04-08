@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { InteractiveGraph } from "@/components/interactive-graph";
+import { AnimatedCounter } from "@/components/animated-counter";
 import type { GitHubUser, GitHubRepo } from "@/lib/github";
 
 const USERNAME = "Joshclxx";
@@ -143,14 +144,14 @@ export function ContributionGraph() {
                   ].map((stat) => (
                     <div
                       key={stat.label}
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between px-2 py-1 -mx-2 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default group/stat"
                     >
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <span style={{ color: stat.color }}>{stat.icon}</span>
+                        <span className="transition-transform duration-200 group-hover/stat:scale-110" style={{ color: stat.color }}>{stat.icon}</span>
                         <span className="text-xs">{stat.label}</span>
                       </div>
-                      <span className="text-sm font-semibold text-foreground tabular-nums">
-                        {(stat.value ?? 0).toLocaleString()}
+                      <span className="text-sm font-semibold text-foreground tabular-nums transition-transform duration-200 group-hover/stat:scale-110">
+                        <AnimatedCounter value={stat.value ?? 0} />
                       </span>
                     </div>
                   ))}

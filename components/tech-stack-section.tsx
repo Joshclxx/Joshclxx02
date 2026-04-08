@@ -48,11 +48,12 @@ export function TechStackSection() {
           {frameworks.map((tech) => (
             <div
               key={tech}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] hover:border-[var(--gh-text-secondary)] transition-colors text-sm"
+              className="tech-pill flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] text-sm cursor-default"
+              style={{ '--tech-color': techColors[tech] || '#8b949e' } as React.CSSProperties}
             >
               <span
                 className="lang-dot"
-                style={{ backgroundColor: techColors[tech] || "#8b949e" }}
+                style={{ backgroundColor: techColors[tech] || '#8b949e' }}
               />
               <span className="text-foreground font-medium">{tech}</span>
             </div>
@@ -74,11 +75,12 @@ export function TechStackSection() {
           {tools.map((tool) => (
             <div
               key={tool}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] hover:border-[var(--gh-text-secondary)] transition-colors text-sm"
+              className="tech-pill flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] text-sm cursor-default"
+              style={{ '--tech-color': techColors[tool] || '#8b949e' } as React.CSSProperties}
             >
               <span
                 className="lang-dot"
-                style={{ backgroundColor: techColors[tool] || "#8b949e" }}
+                style={{ backgroundColor: techColors[tool] || '#8b949e' }}
               />
               <span className="text-foreground font-medium">{tool}</span>
             </div>

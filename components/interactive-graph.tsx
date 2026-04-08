@@ -309,8 +309,8 @@ export function InteractiveGraph({ isDark }: { isDark: boolean }) {
         </div>
       </div>
 
-      {/* Month Filter Row: Jan–Dec */}
-      <div className="flex items-center gap-1 mb-3 flex-wrap">
+      {/* Month Filter Row: Jan–Dec — horizontal scroll on mobile */}
+      <div className="flex items-center gap-1 mb-3 overflow-x-auto no-scrollbar pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {MONTH_LABELS.map((label, idx) => {
           const isActive = selectedMonthIdx === idx;
           const hasData = monthsWithData.has(idx);

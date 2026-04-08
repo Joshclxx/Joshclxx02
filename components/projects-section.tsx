@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { TiltCard } from "@/components/tilt-card";
 
 const techColors: Record<string, string> = {
   "Next JS":       "#e6edf3",
@@ -97,15 +98,21 @@ export function ProjectsSection() {
           <svg className="h-4 w-4 text-muted-foreground" viewBox="0 0 16 16" fill="currentColor">
             <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
           </svg>
-          Pinned Repositories
+          <span className="flex items-center gap-2">
+            Pinned Repositories
+            <svg className="h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4.456.734a1.75 1.75 0 0 1 2.826.504l.613 1.327a3.08 3.08 0 0 0 2.084 1.707l2.454.584c1.332.317 1.8 1.972.832 2.94L11.06 10l.16 3.378a1.75 1.75 0 0 1-2.671 1.57l-2.737-1.69-3.15.9a1.75 1.75 0 0 1-2.098-2.37l1.348-3.104-1.87-2.03A1.75 1.75 0 0 1 .886 4.17Z" />
+            </svg>
+          </span>
           <span className="gh-counter">{projects.length}</span>
         </div>
       </ScrollReveal>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {projects.map((project, index) => (
           <ScrollReveal key={project.title} delay={index * 80}>
-            <div className="repo-card flex flex-col" style={{ height: '268px' }}>
+            <TiltCard maxTilt={5}>
+            <div className="repo-card flex flex-col" style={{ minHeight: '220px', height: 'auto' }}>
               {/* Repo header */}
               <div className="flex items-start gap-2 flex-shrink-0">
                 <svg className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" viewBox="0 0 16 16" fill="currentColor">
@@ -137,15 +144,17 @@ export function ProjectsSection() {
                 {project.description}
               </p>
 
-              {/* Preview image — fills remaining space */}
-              <div className="relative overflow-hidden rounded-md border border-[var(--gh-border)] mt-1 flex-1 min-h-0">
+              {/* Preview image — fills remaining space with hover zoom + gradient overlay */}
+              <div className="relative overflow-hidden rounded-md border border-[var(--gh-border)] mt-1 flex-1 min-h-0 group/img">
                 <Image
                   src={project.image || "/placeholder.svg"}
                   alt={project.title}
                   width={600}
                   height={300}
-                  className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="w-full h-full object-cover opacity-80 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-500 ease-out"
                 />
+                {/* Bottom gradient overlay for depth */}
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--gh-bg-secondary)] to-transparent opacity-60 pointer-events-none" />
               </div>
 
               {/* Footer — language + stars */}
@@ -197,6 +206,7 @@ export function ProjectsSection() {
                 </div>
               </div>
             </div>
+            </TiltCard>
           </ScrollReveal>
         ))}
       </div>

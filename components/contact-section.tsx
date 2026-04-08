@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export function ContactSection() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,6 +24,7 @@ export function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const origin = window.location.origin;
 
@@ -45,6 +47,7 @@ export function ContactSection() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     toast.success("Message sent successfully!");
     setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(false);
   };
 
   const handleChange = (
@@ -69,7 +72,7 @@ export function ContactSection() {
         </div>
       </ScrollReveal>
 
-      <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
         {/* Contact Info */}
         <ScrollReveal direction="left">
           <div className="space-y-6">
@@ -174,10 +177,11 @@ export function ContactSection() {
                   />
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end sm:justify-end">
                   <button
                     type="submit"
-                    className="gh-btn gh-btn-primary px-4 py-1.5"
+                    disabled={isSubmitting}
+                    className={`gh-btn gh-btn-primary px-4 py-1.5 w-full sm:w-auto justify-center ${isSubmitting ? 'btn-loading' : ''}`}
                   >
                     <Send className="h-3.5 w-3.5" />
                     Send message
@@ -191,13 +195,15 @@ export function ContactSection() {
 
       {/* Footer — GitHub style */}
       <ScrollReveal>
-        <footer className="mt-16 pt-6 pb-6 border-t border-[var(--gh-border)]">
+        <footer className="mt-12 sm:mt-16 pt-6 pb-20 sm:pb-6 border-t border-[var(--gh-border)]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
             {/* Left — links */}
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
               <span>© {new Date().getFullYear()} Joshclxx</span>
               <span className="hidden sm:inline">·</span>
               <span className="hidden sm:inline">Built with Next.js & Tailwind CSS</span>
+              <span className="hidden sm:inline">·</span>
+              <span className="hidden sm:inline text-[var(--gh-accent-green)]">Making the web a little prettier ✨</span>
             </div>
 
             {/* Right — social + back to top */}

@@ -50,14 +50,17 @@ export function ServicesSection() {
           const IconComponent = service.icon;
           return (
             <ScrollReveal key={service.title} delay={index * 80}>
-              <div className="repo-card group hover:border-[var(--gh-text-secondary)]">
+              <div
+                className="repo-card service-accent group hover:border-[var(--gh-text-secondary)]"
+                style={{ '--service-color': service.color } as React.CSSProperties}
+              >
                 <div className="flex items-start gap-3">
                   <div
-                    className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0"
+                    className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_-2px_var(--service-color)]"
                     style={{ backgroundColor: `color-mix(in srgb, ${service.color} 15%, transparent)` }}
                   >
                     <IconComponent
-                      className="h-4.5 w-4.5"
+                      className="h-4.5 w-4.5 transition-transform duration-300 group-hover:scale-110"
                       style={{ color: service.color }}
                     />
                   </div>

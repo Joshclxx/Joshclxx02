@@ -168,7 +168,7 @@ export function GitHubOverview({ initialUser, initialRepos, initialEvents }: Git
               <span className="gh-counter">{repos.length}</span>
             </span>
             {activeTab === "repos" && (
-              <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#f78166] rounded-full" />
+              <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#f78166] rounded-full tab-indicator" />
             )}
           </button>
 
@@ -189,7 +189,7 @@ export function GitHubOverview({ initialUser, initialRepos, initialEvents }: Git
               <span className="gh-counter">{events.length}</span>
             </span>
             {activeTab === "activity" && (
-              <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#f78166] rounded-full" />
+              <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#f78166] rounded-full tab-indicator" />
             )}
           </button>
         </div>
