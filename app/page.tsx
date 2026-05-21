@@ -8,16 +8,19 @@ import { CertificationsSection } from "@/components/certifications-section";
 import { ServicesSection } from "@/components/services-section";
 import { ContactSection } from "@/components/contact-section";
 import { Navigation } from "@/components/navigation";
-
 import { PortfolioShell } from "@/components/portfolio-shell";
+import { DesktopPet } from "@/components/desktop-pet";
+import { FoodBowl }   from "@/components/food-bowl";
 import { SectionWrapper } from "@/components/section-wrapper";
 import { SkeletonLoading } from "@/components/skeleton-loading";
 
 export default function Portfolio() {
   return (
     <PortfolioShell>
+      <FoodBowl />
+      <DesktopPet />
       <SkeletonLoading />
-      <main className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background relative" style={{ zIndex: 1 }}>
 
         <Navigation />
 

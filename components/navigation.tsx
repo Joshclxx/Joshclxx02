@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle, SunMoon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSectionFocus } from "./section-focus-context";
+import { WeatherWidget } from "@/components/weather-widget";
 
 const navItems = [
   { href: "#hero",           label: "Overview",      icon: Home,           mobileLabel: "Home" },
@@ -23,7 +24,9 @@ const sectionMap: Record<string, string[]> = {
 };
 
 export function Navigation() {
-  const [isDark, setIsDark] = useState(true);
+  type ThemeMode = "light" | "dark" | "auto";
+  const [themeMode, setThemeMode] = useState<ThemeMode>("auto");
+  const autoTimerRef = useRef<ReturnType<typeof setInterval>>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSheetClosing, setIsSheetClosing] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
@@ -88,28 +91,39 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [focusedNav]);
 
-  // Restore persisted theme
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      document.documentElement.classList.add("light");
-      setIsDark(false);
-    } else {
+  // Apply theme to <html> based on mode
+  const applyTheme = useCallback((mode: ThemeMode) => {
+    const hour = new Date().getHours();
+    const isDark = mode === "dark" || (mode === "auto" && (hour < 6 || hour >= 18));
+    if (isDark) {
       document.documentElement.classList.remove("light");
-      setIsDark(true);
+    } else {
+      document.documentElement.classList.add("light");
     }
   }, []);
 
-  const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.add("light");
-      localStorage.setItem("theme", "light");
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-      setIsDark(true);
+  // Boot: restore saved mode
+  useEffect(() => {
+    const saved = (localStorage.getItem("themeMode") ?? "auto") as ThemeMode;
+    setThemeMode(saved);
+    applyTheme(saved);
+  }, [applyTheme]);
+
+  // Re-apply whenever mode changes
+  useEffect(() => {
+    applyTheme(themeMode);
+    clearInterval(autoTimerRef.current);
+    if (themeMode === "auto") {
+      // re-check every minute so auto switches at exactly 06:00 / 18:00
+      autoTimerRef.current = setInterval(() => applyTheme("auto"), 60_000);
     }
+    return () => clearInterval(autoTimerRef.current);
+  }, [themeMode, applyTheme]);
+
+  const cycleTheme = () => {
+    const next: ThemeMode = themeMode === "light" ? "dark" : themeMode === "dark" ? "auto" : "light";
+    localStorage.setItem("themeMode", next);
+    setThemeMode(next);
   };
 
   return (
@@ -168,8 +182,9 @@ export function Navigation() {
               })}
             </div>
 
-            {/* Right side — blog link + theme */}
+            {/* Right side — weather + blog link + theme */}
             <div className="flex items-center gap-1">
+              <WeatherWidget/>
               <a
                 href="/blog"
                 className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-[var(--gh-btn-bg)] rounded-md transition-colors"
@@ -180,11 +195,17 @@ export function Navigation() {
                 Blog
               </a>
               <button
-                onClick={toggleTheme}
-                className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-[var(--gh-btn-bg)] transition-colors"
-                aria-label="Toggle theme"
+                onClick={cycleTheme}
+                title={`Theme: ${themeMode} — click to cycle`}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium
+                  text-muted-foreground hover:text-foreground hover:bg-[var(--gh-btn-bg)]
+                  border border-transparent hover:border-[var(--gh-border)] transition-all"
+                aria-label="Cycle theme"
               >
-                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                {themeMode === "light" && <Sun  className="h-3.5 w-3.5" />}
+                {themeMode === "dark"  && <Moon className="h-3.5 w-3.5" />}
+                {themeMode === "auto"  && <SunMoon className="h-3.5 w-3.5" />}
+                <span className="hidden sm:inline capitalize">{themeMode}</span>
               </button>
 
               {/* Mobile menu button — opens slide-up sheet */}

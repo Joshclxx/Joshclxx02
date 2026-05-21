@@ -132,10 +132,69 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Subtle dot grid background — eliminates flat/washed-out feel */
-    background-image: radial-gradient(circle, var(--gh-border) 1px, transparent 1px);
-    background-size: 24px 24px;
+    /* Dot grid — slightly brighter blue-tinted dots */
+    background-image:
+      radial-gradient(circle, rgba(88, 166, 255, 0.22) 1.2px, transparent 1.2px);
+    background-size: 26px 26px;
     background-attachment: fixed;
+    background-color: var(--background);
+  }
+
+  /* ── Primary aurora layer (breathes slowly) ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 75% 55% at  8% 12%,  rgba(88,  166, 255, 0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 50% at 92% 82%,  rgba(63,  185,  80, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 65% at 82%  6%,  rgba(188, 140, 255, 0.13) 0%, transparent 65%),
+      radial-gradient(ellipse 65% 45% at 18% 88%,  rgba(56,  189, 248, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 48%,  rgba(244, 114, 182, 0.08) 0%, transparent 55%);
+    animation: auroraBreath 14s ease-in-out infinite;
+  }
+
+  /* ── Secondary aurora layer (drifts opposite phase) ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 40% 35% at 70% 25%,  rgba(251, 146,  60, 0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 38% at 28% 55%,  rgba(34,  211, 238, 0.09) 0%, transparent 58%),
+      radial-gradient(ellipse 35% 45% at 88% 48%,  rgba(167, 139, 250, 0.08) 0%, transparent 60%);
+    animation: auroraBreath 20s ease-in-out infinite reverse;
+  }
+
+  /* ── Light mode overrides ── */
+  .light body {
+    background-image:
+      radial-gradient(circle, rgba(9, 105, 218, 0.14) 1.2px, transparent 1.2px);
+  }
+  .light body::before {
+    background:
+      radial-gradient(ellipse 70% 50% at  8% 12%,  rgba(9,  105, 218, 0.10) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 92% 82%,  rgba(26, 127,  55, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 82%  6%,  rgba(130, 80, 223, 0.08) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 18% 88%,  rgba(9,  105, 218, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 35% 35% at 50% 48%,  rgba(219,  39, 119, 0.05) 0%, transparent 55%);
+  }
+  .light body::after {
+    background:
+      radial-gradient(ellipse 38% 32% at 70% 25%,  rgba(234, 179,  8, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 45% 35% at 28% 55%,  rgba(6,  182, 212, 0.07) 0%, transparent 58%),
+      radial-gradient(ellipse 30% 40% at 88% 48%,  rgba(99,  102, 241, 0.06) 0%, transparent 60%);
+  }
+
+  @keyframes auroraBreath {
+    0%,100% { opacity: 0.75; transform: scale(1)    translateY(0px)   translateX(0px); }
+    25%      { opacity: 1;    transform: scale(1.04) translateY(-12px) translateX(6px); }
+    50%      { opacity: 0.85; transform: scale(1.02) translateY(-6px)  translateX(-4px); }
+    75%      { opacity: 1;    transform: scale(0.97) translateY(8px)   translateX(5px); }
   }
 
   /* GitHub uses system font stack */
