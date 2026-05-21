@@ -168,7 +168,7 @@ export function ShakeToContact() {
       {/* Text */}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground leading-snug">
-          Shake your phone 📱
+          Shake your phone
         </p>
         <p className="text-xs text-muted-foreground mt-0.5">
           to jump to Get in Touch

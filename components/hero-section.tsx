@@ -12,13 +12,13 @@ export function HeroSection() {
   const [bubbleVisible, setBubbleVisible] = useState(true);
 
   const bubbleMessages = [
-    "Hi there! 👋",
-    "Welcome! ✨",
-    "Let's build! 🚀",
-    "Hire me! 💼",
-    "React lover 💙",
-    "Coffee first ☕",
-    "Pixel perfect 🎯",
+    "Hi there!",
+    "Welcome!",
+    "Let's build!",
+    "Hire me!",
+    "React lover",
+    "Coffee first",
+    "Pixel perfect",
   ];
 
   useEffect(() => {
