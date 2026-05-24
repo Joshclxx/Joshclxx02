@@ -16,7 +16,7 @@ export function AboutSection() {
           </div>
 
           {/* README content — markdown-like styling */}
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {/* Heading with typewriter animation */}
             <div className="flex items-center gap-3 mb-6 pb-2 border-b border-[var(--gh-border)]">
               <h2 className="text-2xl font-semibold text-foreground">

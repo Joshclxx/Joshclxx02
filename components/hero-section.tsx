@@ -63,10 +63,13 @@ export function HeroSection() {
     return () => obs.disconnect();
   }, []);
 
-  // Build messages list — include charging status in the rotation when charging
-  const allMessages = isCharging
-    ? [...bubbleMessages, `Charging ⚡ ${batteryLevel}%`]
-    : bubbleMessages;
+  // Build messages list — include battery status in the rotation
+  const isLowBattery = batteryLevel > 0 && batteryLevel <= 20 && !isCharging;
+  const allMessages = isLowBattery
+    ? [...bubbleMessages, `Low battery, please charge 🪫`]
+    : isCharging
+      ? [...bubbleMessages, `Charging ⚡ ${batteryLevel}%`]
+      : bubbleMessages;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -88,7 +91,7 @@ export function HeroSection() {
       {/* Profile Image */}
       <div className="mb-4 flex justify-center lg:justify-start">
         <div className="profile-avatar-wrapper relative w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
-          <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
+      <div className={`profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 shadow-sm bg-[var(--background)] ${isLowBattery ? 'profile-low-battery' : 'border-[var(--gh-border)]'}`}>
             <Image
               src="/images/josh-profile.png"
               alt="Joshua Colobong"

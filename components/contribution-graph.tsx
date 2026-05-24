@@ -80,7 +80,7 @@ export function ContributionGraph() {
 
         <div className="gh-card overflow-hidden">
           {/* Activity graph — interactive with hover tooltips */}
-          <div className="p-4 pb-3">
+          <div className="p-3 sm:p-4 pb-3">
             <p className="text-xs text-muted-foreground mb-2 font-medium">
               Contribution Graph
             </p>

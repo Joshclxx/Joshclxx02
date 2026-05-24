@@ -25,10 +25,10 @@ export default function Portfolio() {
         <Navigation />
 
         {/* GitHub-style layout: sidebar + content */}
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-16">
+        <div className="w-full max-w-6xl mx-auto pt-14 sm:pt-16" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left, 0px))', paddingRight: 'max(1rem, env(safe-area-inset-right, 0px))' }}>
           {/* Profile area: sidebar (fixed) + main content */}
           <SectionWrapper sectionId="hero">
-            <div className="flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-10 py-4 sm:py-6 lg:py-8">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10 py-3 sm:py-6 lg:py-8">
               {/* Left sidebar: fixed 296px on desktop, full-width centered on mobile */}
               <aside className="w-full lg:w-[296px] lg:flex-shrink-0">
                 <HeroSection />
@@ -50,11 +50,11 @@ export default function Portfolio() {
           </SectionWrapper>
 
           {/* Full-width portfolio section */}
-          <div className="space-y-0 pb-4">
+          <div className="space-y-0 pb-2 sm:pb-4">
             <SectionWrapper sectionId="projects">
               <ProjectsSection />
 
-              <section className="py-4 sm:py-6 lg:py-8">
+              <section className="py-3 sm:py-6 lg:py-8">
                 <GitHubOverview />
               </section>
             </SectionWrapper>

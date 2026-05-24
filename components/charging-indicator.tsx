@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Zap } from "lucide-react";
+import { Zap, Battery, BatteryFull, BatteryLow, BatteryMedium } from "lucide-react";
 
 interface BatteryState {
   charging: boolean;
   level: number;
+  supported: boolean;
 }
 
 export function ChargingIndicator() {
@@ -19,7 +20,7 @@ export function ChargingIndicator() {
 
     const update = () => {
       if (batt) {
-        setBattery({ charging: batt.charging, level: batt.level });
+        setBattery({ charging: batt.charging, level: batt.level, supported: true });
       }
     };
 
@@ -30,9 +31,13 @@ export function ChargingIndicator() {
           update();
           batt.addEventListener("chargingchange", update);
           batt.addEventListener("levelchange", update);
+        } else {
+          // API not available — likely iOS or non-secure context
+          setBattery({ charging: false, level: 0, supported: false });
         }
-      } catch {
-        // Battery API not supported
+      } catch (err) {
+        console.log("Battery API error:", err);
+        setBattery({ charging: false, level: 0, supported: false });
       }
     };
 
@@ -48,31 +53,12 @@ export function ChargingIndicator() {
 
   // Show splash when charging starts
   useEffect(() => {
-    if (battery === null) return;
+    if (battery === null || !battery.supported) return;
 
-    // Detect transition from not-charging to charging
-    if (battery.charging && prevCharging.current === false) {
+    if (battery.charging && (prevCharging.current === false || prevCharging.current === null)) {
       setShowSplash(true);
       setSplashFading(false);
 
-      // Start fade out after 1.5s
-      const fadeTimer = setTimeout(() => setSplashFading(true), 1500);
-      // Remove after fade animation (0.5s)
-      const hideTimer = setTimeout(() => {
-        setShowSplash(false);
-        setSplashFading(false);
-      }, 2000);
-
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(hideTimer);
-      };
-    }
-
-    // Also show on initial load if already charging
-    if (battery.charging && prevCharging.current === null) {
-      setShowSplash(true);
-      setSplashFading(false);
       const fadeTimer = setTimeout(() => setSplashFading(true), 1500);
       const hideTimer = setTimeout(() => {
         setShowSplash(false);
@@ -89,23 +75,35 @@ export function ChargingIndicator() {
     prevCharging.current = battery.charging;
   }, [battery]);
 
-  if (!battery?.charging && !showSplash) return null;
+  // Not yet loaded or not supported
+  if (!battery || !battery.supported) return null;
 
-  const percent = Math.round((battery?.level ?? 0) * 100);
+  const percent = Math.round(battery.level * 100);
+
+  // Choose battery icon based on level
+  const BatteryIcon = battery.charging ? Zap
+    : percent > 80 ? BatteryFull
+    : percent > 30 ? BatteryMedium
+    : BatteryLow;
+
+  const indicatorColor = battery.charging
+    ? "var(--gh-accent-green)"
+    : percent <= 20 ? "#f85149" : "var(--gh-text-secondary)";
 
   return (
     <>
-      {/* Nav bar indicator */}
-      {battery?.charging && (
-        <div className="charging-indicator" title={`Charging ${percent}%`}>
-          <div className="charging-bolt">
-            <Zap className="h-3 w-3" />
-          </div>
-          <span className="charging-text">{percent}%</span>
+      {/* Nav bar indicator — always shows battery, glows when charging */}
+      <div
+        className={`charging-indicator ${battery.charging ? "charging-indicator--active" : ""}`}
+        title={`${battery.charging ? "Charging" : "Battery"} ${percent}%`}
+      >
+        <div className="charging-bolt" style={{ color: indicatorColor }}>
+          <BatteryIcon className="h-3 w-3" />
         </div>
-      )}
+        <span className="charging-text" style={{ color: indicatorColor }}>{percent}%</span>
+      </div>
 
-      {/* Center screen splash */}
+      {/* Center screen splash — only when charging starts */}
       {showSplash && (
         <div className={`charging-splash ${splashFading ? 'charging-splash--fade' : ''}`}>
           <div className="charging-splash-content">
@@ -129,8 +127,14 @@ export function ChargingIndicator() {
           gap: 3px;
           padding: 2px 8px 2px 4px;
           border-radius: 20px;
+          background: color-mix(in srgb, var(--gh-text-secondary) 8%, transparent);
+          border: 1px solid color-mix(in srgb, var(--gh-text-secondary) 15%, transparent);
+          transition: all 0.3s ease;
+        }
+
+        .charging-indicator--active {
           background: color-mix(in srgb, var(--gh-accent-green) 12%, transparent);
-          border: 1px solid color-mix(in srgb, var(--gh-accent-green) 25%, transparent);
+          border-color: color-mix(in srgb, var(--gh-accent-green) 25%, transparent);
           animation: chargeGlow 2s ease-in-out infinite;
         }
 
@@ -138,7 +142,10 @@ export function ChargingIndicator() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--gh-accent-green);
+          transition: all 0.3s ease;
+        }
+
+        .charging-indicator--active .charging-bolt {
           animation: chargePulse 1.5s ease-in-out infinite;
           filter: drop-shadow(0 0 4px var(--gh-accent-green));
         }
@@ -146,8 +153,8 @@ export function ChargingIndicator() {
         .charging-text {
           font-size: 10px;
           font-weight: 600;
-          color: var(--gh-accent-green);
           line-height: 1;
+          transition: color 0.3s ease;
         }
 
         @keyframes chargePulse {

@@ -110,7 +110,7 @@ export function GitHubOverview({ initialUser, initialRepos, initialEvents }: Git
       {/* Stats bar */}
       {user && (
         <ScrollReveal>
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-6 text-sm">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6 text-sm">
             <a
               href={`${user.html_url}?tab=repositories`}
               target="_blank"

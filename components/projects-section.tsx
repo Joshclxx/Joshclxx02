@@ -78,7 +78,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
         border border-[var(--gh-border)] rounded-xl bg-[var(--gh-bg-secondary)]
         hover:border-[var(--gh-border-hover)] hover:-translate-y-1.5
         transition-all duration-300 ease-out"
-      style={{ width: CARD_W, scrollSnapAlign: "start" }}
+      style={{ width: 'min(300px, 80vw)', minWidth: 260, scrollSnapAlign: 'start' }}
     >
       {/* Screenshot */}
       <div className="relative overflow-hidden" style={{ height: 164 }}>
@@ -243,7 +243,7 @@ export function ProjectsSection() {
       </div>
 
       {/* Scroll track — bleeds past container padding so cards reach the edge */}
-      <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="relative" style={{ marginLeft: 'calc(-1 * max(1rem, env(safe-area-inset-left, 0px)))', marginRight: 'calc(-1 * max(1rem, env(safe-area-inset-right, 0px)))' }}>
         {/* Left fade */}
         <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none
           bg-gradient-to-r from-background to-transparent" />
@@ -265,8 +265,8 @@ export function ProjectsSection() {
             scrollbarWidth: "none",
             cursor: dragging ? "grabbing" : "grab",
             WebkitOverflowScrolling: "touch",
-            paddingLeft:  "1rem",
-            paddingRight: "1rem",
+            paddingLeft: 'max(1rem, env(safe-area-inset-left, 0px))',
+            paddingRight: 'max(1rem, env(safe-area-inset-right, 0px))',
           }}
         >
           {projects.map(p => <ProjectCard key={p.title} project={p} />)}
