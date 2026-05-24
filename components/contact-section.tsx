@@ -10,6 +10,8 @@ import {
   Github,
   Linkedin,
   ArrowUp,
+  Paperclip,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -21,6 +23,7 @@ export function ContactSection() {
     email: "",
     message: "",
   });
+  const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,17 +31,16 @@ export function ContactSection() {
 
     const origin = window.location.origin;
 
+    const body = new FormData();
+    body.append("name", formData.name);
+    body.append("email", formData.email);
+    body.append("subject", "New Message From Portfolio");
+    body.append("message", formData.message);
+    if (file) body.append("attachment", file);
+
     await fetch(`${origin}/api/send-email`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        subject: "New Message From Portfolio",
-        message: formData.message,
-      }),
+      body,
     }).catch((err) => {
       console.log("Error in sending email:", err.message);
       toast.error("Something went wrong.");
@@ -47,6 +49,7 @@ export function ContactSection() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     toast.success("Message sent successfully!");
     setFormData({ name: "", email: "", message: "" });
+    setFile(null);
     setIsSubmitting(false);
   };
 
@@ -168,7 +171,7 @@ export function ContactSection() {
                   </label>
                   <textarea
                     name="message"
-                    placeholder="Leave a comment..."
+                    placeholder="Leave a message..."
                     value={formData.message}
                     onChange={handleChange}
                     required
@@ -177,16 +180,64 @@ export function ContactSection() {
                   />
                 </div>
 
-                <div className="flex justify-end sm:justify-end">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`gh-btn gh-btn-primary px-4 py-1.5 w-full sm:w-auto justify-center ${isSubmitting ? 'btn-loading' : ''}`}
-                  >
-                    <Send className="h-3.5 w-3.5" />
-                    Send message
-                  </button>
+                {/* File attachment (optional) */}
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1">
+                    Attachment <span className="text-muted-foreground font-normal">(optional)</span>
+                  </label>
+                  {file ? (
+                    <div className="flex items-center gap-2 px-3 py-2 text-sm bg-[var(--gh-bg)] border border-[var(--gh-border)] rounded-md">
+                      <Paperclip className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <span className="text-foreground truncate flex-1">{file.name}</span>
+                      <span className="text-xs text-muted-foreground flex-shrink-0">
+                        {(file.size / 1024).toFixed(0)} KB
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setFile(null)}
+                        className="p-0.5 rounded hover:bg-[var(--gh-btn-bg)] text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                        aria-label="Remove file"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex items-center gap-2 px-3 py-2 text-sm bg-[var(--gh-bg)] border border-dashed border-[var(--gh-border)] rounded-md cursor-pointer hover:border-[var(--gh-accent-blue)] hover:bg-[var(--gh-bg-secondary)] transition-colors">
+                      <Paperclip className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-muted-foreground">Attach a file</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.zip"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) setFile(f);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                  )}
                 </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`gh-btn gh-btn-primary w-full justify-center py-2.5 text-sm ${isSubmitting ? 'btn-loading' : ''}`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="inline-flex items-center gap-2 opacity-0">
+                        <Send className="h-3.5 w-3.5" />
+                        Send message
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5" />
+                      Send message
+                    </>
+                  )}
+                </button>
               </form>
             </div>
           </div>
@@ -195,24 +246,22 @@ export function ContactSection() {
 
       {/* Footer — GitHub style */}
       <ScrollReveal>
-        <footer className="mt-12 sm:mt-16 pt-6 pb-20 sm:pb-6 border-t border-[var(--gh-border)]">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
-            {/* Left — links */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+        <footer className="mt-8 sm:mt-16 pt-4 sm:pt-6 border-t border-[var(--gh-border)]">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-4 text-center sm:text-left">
+            {/* Left — copyright & info */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-center gap-1 sm:gap-4 text-xs text-muted-foreground">
               <span>© {new Date().getFullYear()} Joshclxx</span>
               <span className="hidden sm:inline">·</span>
-              <span className="hidden sm:inline">Built with Next.js & Tailwind CSS</span>
-              <span className="hidden sm:inline">·</span>
-              <span className="hidden sm:inline text-[var(--gh-accent-green)]">Making the web a little prettier ✨</span>
+              <span>Built with Next.js & Tailwind CSS</span>
             </div>
 
             {/* Right — social + back to top */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4 sm:gap-3">
               <a
                 href="https://github.com/Joshclxx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="p-2 -m-2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="h-4 w-4" />
@@ -221,7 +270,7 @@ export function ContactSection() {
                 href="https://www.linkedin.com/in/Joshclxx"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="p-2 -m-2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-4 w-4" />
@@ -231,7 +280,7 @@ export function ContactSection() {
 
               <button
                 onClick={scrollToTop}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="p-2 -m-2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Back to top"
               >
                 <ArrowUp className="h-4 w-4" />

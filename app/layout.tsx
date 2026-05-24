@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ScrollToTop } from "@/components/scroll-to-top";
+import { Suspense } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -46,6 +48,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         {children}
         <Toaster position="top-right" />
       </body>

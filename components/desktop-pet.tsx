@@ -95,6 +95,9 @@ function SleepingCat() {
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────
+// Bottom nav height on mobile (matches .mobile-bottom-nav-inner 56px + some padding)
+const MOBILE_NAV_H = 60;
+
 export function DesktopPet() {
   const [x,   setX]   = useState(140);
   const [posY, setPosY] = useState(0);
@@ -105,6 +108,15 @@ export function DesktopPet() {
   const [dir, setDir]       = useState<1|-1>(1);
   const [tickling, setTickling] = useState(false);
   const [bubble,  setBubble]  = useState<string|null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const xRef      = useRef(140);
   const dirRef    = useRef<1|-1>(1);
@@ -127,7 +139,10 @@ export function DesktopPet() {
     cancelAnimationFrame(walkRaf.current);
     const loop = () => {
       if (stateRef.current !== "walk") return;
-      const max = window.innerWidth - PET_W;
+      const mobile = window.innerWidth < 768;
+      const petScale = mobile ? 0.5 : 1;
+      const effectiveW = PET_W * petScale;
+      const max = window.innerWidth - effectiveW;
       xRef.current += WALK_SPEED * dirRef.current;
       if (xRef.current >= max) { xRef.current = max; dirRef.current = -1; setDir(-1); }
       if (xRef.current <= 0)   { xRef.current = 0;   dirRef.current =  1; setDir(1);  }
@@ -274,27 +289,37 @@ export function DesktopPet() {
     pop(TICKLES[Math.floor(Math.random() * TICKLES.length)], 900);
     timerRef.current = setTimeout(() => {
       setTickling(false);
-      // hop to a random ground position — never climbs elements
-      const gTop   = window.innerHeight - WALK_H;
-      const startL = xRef.current + PET_W/2 - SIT_W/2;
-      const maxX   = window.innerWidth - PET_W - 10;
-      const endX   = Math.max(10, Math.floor(Math.random() * maxX));
-      const endL   = endX + PET_W/2 - SIT_W/2;
-      stateRef.current = "jumping"; setState("jumping");
-      jumpArc(startL, endL, gTop, gTop, 550, 85).then(() => {
-        xRef.current = endX; setX(endX);
-        setAirSync(null);
+      const mobile = window.innerWidth < 768;
+      if (mobile) {
+        // On mobile: just resume walking, no hop (jump arc doesn't account for scale/offset)
         stateRef.current = "walk"; setState("walk");
         startWalkLoop();
         timerRef.current = setTimeout(() => nextStateRef.current(), 1500 + Math.random() * 2000);
-      });
+      } else {
+        // On desktop: hop to a random ground position
+        const gTop   = window.innerHeight - WALK_H;
+        const startL = xRef.current + PET_W/2 - SIT_W/2;
+        const maxX   = window.innerWidth - PET_W - 10;
+        const endX   = Math.max(10, Math.floor(Math.random() * maxX));
+        const endL   = endX + PET_W/2 - SIT_W/2;
+        stateRef.current = "jumping"; setState("jumping");
+        jumpArc(startL, endL, gTop, gTop, 550, 85).then(() => {
+          xRef.current = endX; setX(endX);
+          setAirSync(null);
+          stateRef.current = "walk"; setState("walk");
+          startWalkLoop();
+          timerRef.current = setTimeout(() => nextStateRef.current(), 1500 + Math.random() * 2000);
+        });
+      }
     }, 750);
   }, [jumpArc, pop, returnToGround, startWalkLoop]);
 
   // ── Idle state machine ────────────────────────────────────────────────
   const nextState = useCallback(() => {
     if (!["walk","sit","sleep"].includes(stateRef.current)) return;
+    const mobile = window.innerWidth < 768;
     const r = Math.random();
+    // On mobile: only walk/sit/sleep — no jumping to elements
     const next: PetState = r < 0.5 ? "walk" : r < 0.8 ? "sit" : "sleep";
     stateRef.current = next; setState(next);
     if (next === "walk") startWalkLoop();
@@ -316,15 +341,19 @@ export function DesktopPet() {
   const isFlying = state === "jumping" || state === "returning";
   const useSit   = state === "sit" || state === "perching" || isFlying || state === "tickled" || state === "eating";
 
+  const mobileBottom = isMobile ? MOBILE_NAV_H : 0;
+
   return (
     <div
       className="hidden md:block select-none"
       style={{
         position: "fixed",
-        zIndex: 9999,
+        zIndex: 49, // below bottom nav (z-50) but above content
         cursor: "pointer",
         pointerEvents: "auto",
-        ...(air ? { top: air.top, left: air.left } : { bottom: posY, left: x }),
+        transform: isMobile ? 'scale(0.5)' : undefined,
+        transformOrigin: 'bottom left',
+        ...(air ? { top: air.top, left: air.left } : { bottom: posY + mobileBottom, left: x }),
       }}
       onClick={handlePet}
       onTouchEnd={e => { e.preventDefault(); handlePet(); }}

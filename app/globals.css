@@ -861,35 +861,24 @@ textarea:focus {
 .btn-loading::after {
   content: '';
   position: absolute;
-  width: 16px;
-  height: 16px;
-  top: 50%;
-  left: 50%;
-  margin-top: -8px;
-  margin-left: -8px;
+  width: 18px;
+  height: 18px;
+  inset: 0;
+  margin: auto;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
-/* ── Custom scrollbar (GitHub-like) ── */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ── Hide all scrollbars ── */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--gh-border);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gh-text-secondary);
+*::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
 }
 
 /* ── Mobile Essentials ── */
@@ -935,6 +924,12 @@ img, svg {
   animation: mobileNavSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Charging indicator inside mobile bottom nav */
+.mobile-bottom-nav > .charging-indicator {
+  margin: 4px auto 0;
+  font-size: 10px;
+}
+
 .mobile-bottom-nav-inner {
   display: flex;
   justify-content: space-around;
@@ -956,6 +951,7 @@ img, svg {
   border: none;
   background: none;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 .mobile-tab:active {
@@ -967,18 +963,53 @@ img, svg {
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
+  transition: color 0.25s ease, transform 0.2s ease;
 }
 
+/* ── Active tab: pop-up + circle highlight ── */
 .mobile-tab--active {
   color: var(--gh-accent-blue);
+  transform: translateY(-2px);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
 }
 
 .mobile-tab--active .mobile-tab-icon {
   color: var(--gh-accent-blue);
 }
 
+/* Circle highlight behind icon */
+.mobile-tab-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: background 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mobile-tab--active .mobile-tab-icon-wrapper {
+  background: color-mix(in srgb, var(--gh-accent-blue) 15%, transparent);
+  transform: scale(1.15);
+  animation: tabPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mobile-tab--inactive .mobile-tab-icon-wrapper {
+  background: transparent;
+  transform: scale(1);
+}
+
+@keyframes tabPopIn {
+  0% { transform: scale(0.6); opacity: 0.5; }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
 .mobile-tab--inactive {
   color: var(--gh-text-secondary);
+  transform: translateY(0);
+  transition: transform 0.25s ease, color 0.2s ease;
 }
 
 /* Active tab indicator dot */
@@ -989,6 +1020,12 @@ img, svg {
   background: var(--gh-accent-blue);
   margin-top: 1px;
   transition: opacity 0.2s ease, transform 0.2s ease;
+  animation: dotFadeIn 0.3s ease 0.15s both;
+}
+
+@keyframes dotFadeIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* ── Mobile Nav Sheet (slide-up drawer) ── */
@@ -1056,7 +1093,7 @@ img, svg {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 20px;
+  padding: 14px max(20px, env(safe-area-inset-right, 20px)) 14px max(20px, env(safe-area-inset-left, 20px));
   font-size: 0.9375rem;
   font-weight: 500;
   transition: background 0.15s ease;
@@ -1081,78 +1118,165 @@ img, svg {
 .mobile-sheet-divider {
   height: 1px;
   background: var(--gh-border);
-  margin: 4px 20px;
+  margin: 4px max(20px, env(safe-area-inset-right, 20px)) 4px max(20px, env(safe-area-inset-left, 20px));
 }
 
 /* ── Mobile-Specific Spacing & Refinements ── */
-@media (max-width: 640px) {
-  /* Body: add bottom padding for bottom tab bar */
+
+/* ── All mobile (< 768px): safe area + bottom bar clearance ── */
+@media (max-width: 767px) {
+  /* Remove dot grid and aurora on mobile — causes visible edge artifacts */
+  body {
+    background-image: none !important;
+  }
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  /* Main content: bottom clearance for fixed bottom tab bar */
   main {
     padding-bottom: calc(72px + var(--safe-area-bottom));
   }
 
-  /* Top nav: safe area inset */
+  /* Top nav: respect notch / Dynamic Island */
   nav.fixed {
     padding-top: var(--safe-area-top);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
   }
 
-  /* Buttons: larger touch targets */
+  /* Bottom nav: respect horizontal safe areas (landscape) */
+  .mobile-bottom-nav {
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
+  }
+
+  /* Disable hover-lift on touch — prevents "stuck" states */
+  .gh-card:hover,
+  .repo-card:hover,
+  .service-accent:hover,
+  .tech-pill:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ── Standard mobile (≤ 640px): spacing, gaps, touch targets ── */
+@media (max-width: 640px) {
+  /* ─ Touch targets: minimum 44px per Apple HIG ─ */
   .gh-btn {
     min-height: 44px;
     padding: 0.625rem 1rem;
     font-size: 0.9375rem;
   }
 
-  /* Section headings: slightly smaller */
+  input, textarea {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+    min-height: 44px;
+    padding: 0.625rem 0.75rem;
+  }
+
+  /* ─ Section spacing: tighter vertical rhythm ─ */
+  section[id] {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
   .gh-section-heading {
     font-size: 0.9375rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.375rem;
   }
 
-  /* Repo cards: tighter but breathable */
+  /* ─ Cards: tighter padding ─ */
   .repo-card {
     padding: 0.875rem;
+    gap: 0.375rem;
   }
 
-  /* Full-bleed cards on tiny screens */
   .gh-card {
     border-radius: var(--radius);
   }
 
-  /* Activity graph: horizontal scroll */
-  .contribution-graph-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  /* About/README card: tighter mobile padding */
+  .gh-card > div:last-child {
+    padding: 1rem 1rem;
   }
 
-  /* Form inputs: bigger touch targets */
-  input, textarea {
-    font-size: 16px !important; /* Prevents iOS zoom on focus */
-    min-height: 44px;
-  }
-
-  /* Footer: compact on mobile */
-  footer {
-    padding-bottom: calc(16px + 72px + var(--safe-area-bottom));
-  }
-
-  /* Tech pills: touch-friendly */
+  /* ─ Tech pills: larger touch targets ─ */
   .tech-pill {
     padding: 0.5rem 0.75rem;
     min-height: 36px;
+    font-size: 0.8125rem;
   }
 
-  /* Cert timeline items: larger touch targets */
+  /* ─ Certification timeline: better mobile positioning ─ */
+  .cert-timeline::before {
+    left: 19px;
+  }
+
   .cert-timeline-item {
-    padding: 0.875rem 1rem !important;
+    padding: 0.75rem 0.75rem 0.75rem 2.75rem !important;
+    gap: 0.75rem;
   }
 
-  /* Badge: slightly bigger on mobile */
+  .cert-timeline-item::before {
+    left: 16px;
+  }
+
+  /* ─ Badge: touch-friendly sizing ─ */
   .gh-badge {
     padding: 0.25rem 0.625rem;
     font-size: 0.6875rem;
   }
 
-  /* Blog prose: more readable on mobile */
+  /* ─ Activity graph: horizontal scroll ─ */
+  .contribution-graph-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Interactive graph month filters: scrollable */
+  .graph-container .flex.items-center.gap-1 {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+
+  .graph-container .flex.items-center.gap-1::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─ Contact form: full-width submit ─ */
+  form .flex.justify-end {
+    justify-content: stretch;
+  }
+  form .flex.justify-end .gh-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ─ Footer: standard mobile spacing ─ */
+  footer {
+    margin-top: 1rem !important;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* ─ Service cards: full-width accent ─ */
+  .service-accent {
+    border-left-width: 3px;
+  }
+
+  /* ─ Profile avatar: slower float, subtle feel ─ */
+  .profile-avatar-wrapper {
+    animation-duration: 8s;
+  }
+
+  /* ─ Blog prose: mobile-optimised reading ─ */
   .blog-prose {
     font-size: 0.9375rem;
     line-height: 1.8;
@@ -1175,55 +1299,28 @@ img, svg {
     padding: 1rem;
   }
 
-  /* Profile avatar: smaller on mobile */
-  .profile-avatar-wrapper {
-    animation-duration: 8s; /* Slow down float animation */
-  }
-
-  /* Interactive graph month filters: scrollable */
-  .graph-container .flex.items-center.gap-1 {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 4px;
-  }
-
-  .graph-container .flex.items-center.gap-1::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Contact form: full-width button */
-  form .flex.justify-end {
-    justify-content: stretch;
-  }
-  form .flex.justify-end .gh-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Service cards: full-width left accent */
-  .service-accent {
-    border-left-width: 3px;
-  }
-
-  /* Skeleton avatar: mobile size */
+  /* ─ Skeleton: mobile avatar size ─ */
   .skeleton-avatar {
     width: 160px !important;
     height: 160px !important;
   }
+
+  /* ─ Speech bubble: tighter position on small avatars ─ */
+  .profile-speech-bubble {
+    top: -4px;
+    right: -4px;
+  }
 }
 
-/* Very small screens (320px) */
+/* ── Very small screens (≤ 374px, e.g. iPhone SE, Galaxy Fold) ── */
 @media (max-width: 374px) {
   .mobile-bottom-nav-inner {
     height: 52px;
   }
 
   .mobile-tab {
-    min-width: 48px;
-    padding: 4px 4px;
+    min-width: 44px;
+    padding: 3px 3px;
   }
 
   .mobile-tab-label {
@@ -1233,11 +1330,45 @@ img, svg {
   .gh-btn {
     font-size: 0.8125rem;
     padding: 0.5rem 0.75rem;
+    min-height: 40px;
   }
 
-  /* Stats row: wrap to 2x2 grid */
+  .gh-section-heading {
+    font-size: 0.8125rem;
+  }
+
+  /* Stats row: wrap tightly */
   .flex.flex-wrap.items-center.gap-3 {
-    gap: 0.5rem;
+    gap: 0.375rem;
+  }
+
+  /* Cert logos: shrink slightly */
+  .cert-timeline-item .flex-shrink-0 {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  /* Contribution graph: even smaller cells */
+  .contribution-cell {
+    width: 9px;
+    height: 9px;
+  }
+
+  .contribution-grid {
+    gap: 2px;
+  }
+
+  /* Tech pills: compact */
+  .tech-pill {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  /* Service icon container: smaller */
+  .service-accent .w-9 {
+    width: 2rem;
+    height: 2rem;
   }
 }
 

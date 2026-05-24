@@ -5,6 +5,7 @@ import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle, Su
 import { cn } from "@/lib/utils";
 import { useSectionFocus } from "./section-focus-context";
 import { WeatherWidget } from "@/components/weather-widget";
+import { ChargingIndicator } from "@/components/charging-indicator";
 
 const navItems = [
   { href: "#hero",           label: "Overview",      icon: Home,           mobileLabel: "Home" },
@@ -12,6 +13,15 @@ const navItems = [
   { href: "#certifications", label: "Achievements",  icon: Award,          mobileLabel: "Certs" },
   { href: "#services",       label: "Packages",      icon: Package,        mobileLabel: "Services" },
   { href: "#contact",        label: "Contact",       icon: MessageCircle,  mobileLabel: "Contact" },
+];
+
+// Bottom tab bar order (matches page scroll order)
+const mobileNavItems = [
+  navItems[0], // Home
+  navItems[1], // Projects
+  navItems[2], // Certs
+  navItems[3], // Services
+  navItems[4], // Contact
 ];
 
 // Which scroll-section IDs each nav tab "owns"
@@ -38,14 +48,15 @@ export function Navigation() {
       e.preventDefault();
       setFocusedNav(href);
 
-      // Scroll to the section smoothly
-      const targetId = href.replace("#", "");
-      const el = document.getElementById(targetId);
-      if (el) {
+      // Always scroll to top — SectionWrapper hides non-focused sections,
+      // so the active section is always at the top of the page.
+      // Instant jump first, then smooth scroll as a polish layer.
+      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
-      }
+      });
     },
     [setFocusedNav]
   );
@@ -136,8 +147,8 @@ export function Navigation() {
           ? "border-[var(--gh-border)] shadow-[0_1px_3px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.08)]"
           : "border-transparent"
       )}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="container mx-auto" style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left, 0px))', paddingRight: 'max(1rem, env(safe-area-inset-right, 0px))' }}>
+          <div className="flex items-center justify-between h-14 sm:h-16">
 
             {/* Logo */}
             <a
@@ -184,6 +195,7 @@ export function Navigation() {
 
             {/* Right side — weather + blog link + theme */}
             <div className="flex items-center gap-1">
+              <ChargingIndicator />
               <WeatherWidget/>
               <a
                 href="/blog"
@@ -294,8 +306,9 @@ export function Navigation() {
 
       {/* ── Mobile Bottom Tab Bar ── */}
       <div className="mobile-bottom-nav md:hidden">
+        <ChargingIndicator />
         <div className="mobile-bottom-nav-inner">
-          {navItems.map((item) => {
+          {mobileNavItems.map((item) => {
             const IconComp = item.icon;
             const isActive = focusedNav
               ? focusedNav === item.href
@@ -310,9 +323,10 @@ export function Navigation() {
                 )}
                 aria-label={item.label}
               >
-                <IconComp className="h-5 w-5 mobile-tab-icon" />
+                <div className="mobile-tab-icon-wrapper">
+                  <IconComp className="h-5 w-5 mobile-tab-icon" />
+                </div>
                 <span className="mobile-tab-label">{item.mobileLabel}</span>
-                {isActive && <span className="mobile-tab-dot" />}
               </button>
             );
           })}

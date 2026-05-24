@@ -10,6 +10,8 @@ export function HeroSection() {
   const [isDark, setIsDark] = useState(true);
   const [bubbleIndex, setBubbleIndex] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
+  const [isCharging, setIsCharging] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState(0);
 
   const bubbleMessages = [
     "Hi there!",
@@ -20,6 +22,34 @@ export function HeroSection() {
     "Coffee first",
     "Pixel perfect",
   ];
+
+  // Battery detection
+  useEffect(() => {
+    let batt: any = null;
+    const update = () => {
+      if (batt) {
+        setIsCharging(batt.charging);
+        setBatteryLevel(Math.round(batt.level * 100));
+      }
+    };
+    const init = async () => {
+      try {
+        if ("getBattery" in navigator) {
+          batt = await (navigator as any).getBattery();
+          update();
+          batt.addEventListener("chargingchange", update);
+          batt.addEventListener("levelchange", update);
+        }
+      } catch {}
+    };
+    init();
+    return () => {
+      if (batt) {
+        batt.removeEventListener("chargingchange", update);
+        batt.removeEventListener("levelchange", update);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const check = () =>
@@ -33,23 +63,30 @@ export function HeroSection() {
     return () => obs.disconnect();
   }, []);
 
+  // Build messages list — include charging status in the rotation when charging
+  const allMessages = isCharging
+    ? [...bubbleMessages, `Charging ⚡ ${batteryLevel}%`]
+    : bubbleMessages;
+
   useEffect(() => {
     const interval = setInterval(() => {
       // Fade out
       setBubbleVisible(false);
       // After fade-out, change message and fade in
       setTimeout(() => {
-        setBubbleIndex((prev) => (prev + 1) % bubbleMessages.length);
+        setBubbleIndex((prev) => (prev + 1) % allMessages.length);
         setBubbleVisible(true);
       }, 300);
     }, 3500);
     return () => clearInterval(interval);
-  }, [bubbleMessages.length]);
+  }, [allMessages.length]);
+
+  const currentBubble = allMessages[bubbleIndex % allMessages.length];
 
   return (
     <section id="hero" className="hero-cascade">
       {/* Profile Image */}
-      <div className="mb-4 flex lg:justify-start justify-center">
+      <div className="mb-4 flex justify-center lg:justify-start">
         <div className="profile-avatar-wrapper relative w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
           <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
             <Image
@@ -85,7 +122,7 @@ export function HeroSection() {
                 border: `1px solid ${isDark ? "#484f58" : "#d0d7de"}`,
               }}
             >
-              {bubbleMessages[bubbleIndex]}
+              {currentBubble}
               {/* Bubble tail */}
               <div
                 className="absolute -bottom-1.5 left-5 w-3 h-3 rotate-45"
@@ -106,10 +143,7 @@ export function HeroSection() {
         <h1 className="text-2xl font-semibold text-foreground leading-tight">
           Joshua Colobong
         </h1>
-        <div className="flex items-center gap-2 justify-center lg:justify-start">
-          <p className="text-xl font-light text-muted-foreground">
-            Joshclxx
-          </p>
+        <div className="flex items-center justify-center lg:justify-start mt-1">
           {/* GitHub-style status indicator */}
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[color-mix(in_srgb,var(--gh-accent-green)_12%,transparent)] border border-[color-mix(in_srgb,var(--gh-accent-green)_25%,transparent)]">
             <span className="relative flex h-2 w-2">
@@ -129,18 +163,18 @@ export function HeroSection() {
       </p>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
+      <div className="flex flex-row gap-2 mb-3 sm:mb-4 justify-center lg:justify-start">
         <Link
           href="/pdf/Joshclxx_CV.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className="gh-btn gh-btn-primary w-full sm:w-auto justify-center text-sm py-1.5"
+          className="gh-btn gh-btn-primary flex-1 justify-center text-sm py-1.5"
         >
           <Download className="h-4 w-4" />
           Download CV
         </Link>
         <button
-          className="gh-btn w-full sm:w-auto justify-center text-sm py-1.5"
+          className="gh-btn flex-1 justify-center text-sm py-1.5"
           onClick={() => {
             const contactSection = document.getElementById("contact");
             if (contactSection) {
@@ -154,7 +188,7 @@ export function HeroSection() {
       </div>
 
       {/* Meta info — GitHub profile style */}
-      <div className="space-y-1.5 mb-4 text-sm text-center lg:text-left">
+      <div className="space-y-1.5 mb-3 sm:mb-4 text-sm text-center lg:text-left">
         <div className="flex items-center gap-2 text-muted-foreground justify-center lg:justify-start">
           <Building2 className="h-4 w-4 flex-shrink-0" />
           <span>Frontend Developer</span>
@@ -199,7 +233,7 @@ export function HeroSection() {
       </div>
 
       {/* Divider */}
-      <div className="border-b border-[var(--gh-border)] my-4" />
+      <div className="border-b border-[var(--gh-border)] my-3 sm:my-4" />
 
       {/* Highlights — GitHub achievement style */}
       <div className="space-y-2">
