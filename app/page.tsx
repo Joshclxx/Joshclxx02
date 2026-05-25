@@ -12,14 +12,14 @@ import { PortfolioShell } from "@/components/portfolio-shell";
 import { DesktopPet } from "@/components/desktop-pet";
 import { FoodBowl }   from "@/components/food-bowl";
 import { SectionWrapper } from "@/components/section-wrapper";
-import { SkeletonLoading } from "@/components/skeleton-loading";
+import { IntroAnimation } from "@/components/intro-animation";
 
 export default function Portfolio() {
   return (
     <PortfolioShell>
       <FoodBowl />
       <DesktopPet />
-      <SkeletonLoading />
+      <IntroAnimation />
       <main className="min-h-screen bg-background relative" style={{ zIndex: 1 }}>
 
         <Navigation />

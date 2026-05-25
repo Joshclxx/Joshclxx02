@@ -160,9 +160,9 @@ export function HeroSection() {
 
       {/* Bio */}
       <p className="text-sm text-muted-foreground mb-4 leading-relaxed text-center lg:text-left">
-        Frontend developer specializing in React, Next.js, TypeScript, and
-        Tailwind CSS. Building clean, accessible, and high-performing web
-        experiences.
+        Junior Frontend Developer specializing in fast, responsive, and
+        user-centric web applications using React, Next.js, TypeScript, and
+        Tailwind CSS. Focused on clean code, performance, and accessibility.
       </p>
 
       {/* Action Buttons */}
@@ -194,7 +194,7 @@ export function HeroSection() {
       <div className="space-y-1.5 mb-3 sm:mb-4 text-sm text-center lg:text-left">
         <div className="flex items-center gap-2 text-muted-foreground justify-center lg:justify-start">
           <Building2 className="h-4 w-4 flex-shrink-0" />
-          <span>Frontend Developer</span>
+          <span>Junior Software Engineer</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground justify-center lg:justify-start">
           <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -250,7 +250,7 @@ export function HeroSection() {
           </span>
           <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-blue)]" />
-            5 Projects
+            8 Projects
           </span>
           <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-purple)]" />

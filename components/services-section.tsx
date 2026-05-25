@@ -1,4 +1,4 @@
-import { Code, CheckCircle, Smartphone, GitBranch } from "lucide-react";
+import { Code, CheckCircle, Smartphone, GitBranch, TabletSmartphone } from "lucide-react";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 const services = [
@@ -8,6 +8,13 @@ const services = [
     description:
       "Building responsive, performant web applications using modern frameworks like React, Next.js, and Tailwind CSS.",
     color: "var(--gh-accent-blue)",
+  },
+  {
+    icon: TabletSmartphone,
+    title: "Mobile Development",
+    description:
+      "Creating cross-platform mobile apps with React Native and Expo, delivering smooth native experiences on iOS and Android.",
+    color: "var(--gh-accent-yellow, #d29922)",
   },
   {
     icon: Smartphone,

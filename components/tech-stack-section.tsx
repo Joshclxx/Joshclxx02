@@ -21,10 +21,11 @@ const techColors: Record<string, string> = {
   "React Native":  "#61dafb",
   "Zustand":       "#433e38",
   "Expo":          "#000020",
+  "PostgreSQL":    "#4169e1",
 };
 
 const frameworks = [
-  "React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Node.js", "HTML", "CSS", "Webflow",
+  "React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Node.js", "React Native", "Expo", "HTML", "CSS",
 ];
 
 const tools = [

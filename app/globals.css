@@ -144,7 +144,7 @@
   body::before {
     content: '';
     position: fixed;
-    inset: 0;
+    inset: -30px;
     z-index: 0;
     pointer-events: none;
     background:
@@ -160,7 +160,7 @@
   body::after {
     content: '';
     position: fixed;
-    inset: 0;
+    inset: -30px;
     z-index: 0;
     pointer-events: none;
     background:
@@ -1944,4 +1944,446 @@ img, svg {
   background: var(--gh-border, #30363d);
   margin: 16px 0;
   width: 100%;
+}
+
+/* ═══════════════════════════════════════════════
+   Intro Animation System
+   ═══════════════════════════════════════════════ */
+
+/* ── Keyframes ── */
+
+@keyframes introFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes introFadeOut {
+  0%   { opacity: 1; filter: blur(0); transform: scale(1); }
+  100% { opacity: 0; filter: blur(12px); transform: scale(1.04); }
+}
+
+@keyframes introBracketLeft {
+  0%   { transform: translateX(20px); opacity: 0; }
+  50%  { transform: translateX(-4px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes introBracketRight {
+  0%   { transform: translateX(-20px); opacity: 0; }
+  50%  { transform: translateX(4px); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes introLetterReveal {
+  0%   { opacity: 0; transform: scale(0.5) translateY(8px); filter: blur(4px); }
+  60%  { opacity: 1; transform: scale(1.08) translateY(-2px); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+@keyframes introRingPulse {
+  0%   { transform: scale(0.6); opacity: 0; }
+  40%  { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes introRingGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(88, 166, 255, 0.15), 0 0 60px rgba(63, 185, 80, 0.08); }
+  50%      { box-shadow: 0 0 50px rgba(88, 166, 255, 0.3), 0 0 100px rgba(188, 140, 255, 0.12); }
+}
+
+@keyframes introParticleDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(15px, -20px) scale(1.2); }
+  50%  { transform: translate(-10px, -35px) scale(0.8); }
+  75%  { transform: translate(20px, -15px) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes introProgressGlow {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+@keyframes introTerminalBlink {
+  0%, 50% { border-right-color: var(--gh-accent-blue, #58a6ff); }
+  51%, 100% { border-right-color: transparent; }
+}
+
+@keyframes introGridPulse {
+  0%, 100% { opacity: 0.03; }
+  50%      { opacity: 0.07; }
+}
+
+@keyframes introStatusPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes introLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ── Overlay ── */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--background, #0d1117);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.intro-exit {
+  animation: introFadeOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+/* ── Ambient grid background ── */
+
+.intro-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(88, 166, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88, 166, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: introGridPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.light .intro-grid {
+  background-image:
+    linear-gradient(rgba(9, 105, 218, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(9, 105, 218, 0.06) 1px, transparent 1px);
+}
+
+/* ── Floating particles ── */
+
+.intro-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.intro-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: introParticleDrift linear infinite;
+  will-change: transform;
+}
+
+/* ── Center content block ── */
+
+.intro-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  max-width: 480px;
+  width: 100%;
+}
+
+/* ── Logo / Monogram ── */
+
+.intro-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  animation: introLogoFloat 3s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+.intro-logo-brackets {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.intro-bracket {
+  color: var(--gh-accent-blue, #58a6ff);
+  opacity: 0;
+}
+
+.intro-bracket-left {
+  animation: introBracketLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+}
+
+.intro-bracket-right {
+  animation: introBracketRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+}
+
+.intro-logo-text {
+  display: flex;
+  gap: 2px;
+}
+
+.intro-logo-j,
+.intro-logo-c {
+  opacity: 0;
+  background: linear-gradient(135deg, var(--gh-accent-blue, #58a6ff), var(--gh-accent-purple, #bc8cff));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.intro-logo-j {
+  animation: introLetterReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
+}
+
+.intro-logo-c {
+  animation: introLetterReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.65s forwards;
+}
+
+.light .intro-logo-j,
+.light .intro-logo-c {
+  background: linear-gradient(135deg, var(--gh-accent-blue, #0969da), var(--gh-accent-purple, #8250df));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .intro-bracket {
+  color: var(--gh-accent-blue, #0969da);
+}
+
+/* ── Logo glow ring ── */
+
+.intro-logo-ring {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.intro-logo-ring-active {
+  opacity: 1;
+  animation: introRingPulse 1.5s ease-out forwards, introRingGlow 3s ease-in-out infinite 1.5s;
+  border-color: rgba(88, 166, 255, 0.2);
+}
+
+.light .intro-logo-ring-active {
+  border-color: rgba(9, 105, 218, 0.2);
+  animation: introRingPulse 1.5s ease-out forwards;
+}
+
+/* ── Username ── */
+
+.intro-username {
+  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  font-weight: 500;
+  color: var(--gh-text-secondary, #8b949e);
+  letter-spacing: 0.15em;
+  text-transform: lowercase;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s ease 0.8s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+}
+
+.intro-username-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Subtitle ── */
+
+.intro-subtitle {
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  font-weight: 400;
+  color: var(--gh-text-secondary, #8b949e);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-subtitle-visible {
+  opacity: 0.7;
+  transform: translateY(0);
+}
+
+/* ── Progress bar ── */
+
+.intro-progress-track {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 3px;
+  background: var(--gh-border, #30363d);
+  border-radius: 4px;
+  overflow: visible;
+  margin-top: 8px;
+}
+
+.intro-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--gh-accent-blue, #58a6ff),
+    var(--gh-accent-green, #3fb950)
+  );
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+.intro-progress-glow {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gh-accent-blue, #58a6ff);
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 8px var(--gh-accent-blue, #58a6ff),
+    0 0 20px rgba(88, 166, 255, 0.3);
+  animation: introProgressGlow 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.light .intro-progress-fill {
+  background: linear-gradient(
+    90deg,
+    var(--gh-accent-blue, #0969da),
+    var(--gh-accent-green, #1a7f37)
+  );
+}
+
+.light .intro-progress-glow {
+  background: var(--gh-accent-blue, #0969da);
+  box-shadow:
+    0 0 8px var(--gh-accent-blue, #0969da),
+    0 0 20px rgba(9, 105, 218, 0.3);
+}
+
+/* ── Terminal lines ── */
+
+.intro-terminal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 360px;
+  margin-top: 12px;
+  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+}
+
+.intro-terminal-line {
+  color: var(--gh-text-secondary, #8b949e);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.intro-terminal-line-visible {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.intro-terminal-success {
+  color: var(--gh-accent-green, #3fb950);
+  opacity: 1 !important;
+}
+
+.light .intro-terminal-success {
+  color: var(--gh-accent-green, #1a7f37);
+}
+
+/* ── Bottom status indicator ── */
+
+.intro-status {
+  position: absolute;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-family: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  color: var(--gh-text-secondary, #8b949e);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-status-visible {
+  opacity: 0.5;
+  transform: translateY(0);
+}
+
+.intro-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gh-accent-green, #3fb950);
+  animation: introStatusPulse 1.5s ease-in-out infinite;
+}
+
+.light .intro-status-dot {
+  background: var(--gh-accent-green, #1a7f37);
+}
+
+/* ── Responsive adjustments ── */
+
+@media (max-width: 480px) {
+  .intro-terminal {
+    max-width: 100%;
+  }
+
+  .intro-progress-track {
+    max-width: 200px;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay,
+  .intro-bracket,
+  .intro-logo-j,
+  .intro-logo-c,
+  .intro-particle,
+  .intro-logo,
+  .intro-logo-ring,
+  .intro-progress-glow,
+  .intro-status-dot {
+    animation: none !important;
+  }
+
+  .intro-bracket {
+    opacity: 1 !important;
+  }
+
+  .intro-logo-j,
+  .intro-logo-c {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .intro-exit {
+    animation: introFadeOut 0.3s ease forwards !important;
+  }
 }

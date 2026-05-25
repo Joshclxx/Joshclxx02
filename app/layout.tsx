@@ -27,7 +27,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Joshclxx — Frontend Developer",
   description:
-    "Frontend developer specializing in React, Next.js, TypeScript, and Tailwind CSS. Building clean, accessible, and high-performing web experiences.",
+    "Junior Frontend Developer specializing in fast, responsive, and user-centric web applications using React, Next.js, TypeScript, and Tailwind CSS. Focused on clean code, performance, and accessibility.",
 };
 
 export default function RootLayout({

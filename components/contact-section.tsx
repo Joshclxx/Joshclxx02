@@ -106,7 +106,7 @@ export function ContactSection() {
                 <FaWhatsapp className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium text-foreground">WhatsApp</p>
-                  <p className="text-xs text-muted-foreground">(+63) 967-455-5677</p>
+                  <p className="text-xs text-muted-foreground">(+63) 992-403-8038</p>
                 </div>
               </div>
 

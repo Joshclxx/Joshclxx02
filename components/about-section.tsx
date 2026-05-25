@@ -27,19 +27,22 @@ export function AboutSection() {
             {/* Content in markdown style */}
             <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
               <p>
-                I&apos;m a frontend developer passionate about building
-                fast, accessible, and responsive web interfaces. I
-                specialize in <strong className="text-foreground font-medium">React</strong>,{" "}
+                I&apos;m a junior frontend developer specializing in fast,
+                responsive, and user-centric web applications using{" "}
+                <strong className="text-foreground font-medium">React</strong>,{" "}
                 <strong className="text-foreground font-medium">Next.js</strong>,{" "}
                 <strong className="text-foreground font-medium">TypeScript</strong>, and{" "}
                 <strong className="text-foreground font-medium">Tailwind CSS</strong> —
-                transforming ideas and designs into smooth, pixel-perfect experiences.
+                focused on clean code, performance, and accessibility.
               </p>
               <p>
-                With a strong focus on clean code, performance, and
-                responsive design, I enjoy turning complex requirements
-                into intuitive user interfaces that work seamlessly
-                across all devices.
+                Beyond the web, I also work with{" "}
+                <strong className="text-foreground font-medium">React Native</strong> for
+                mobile development,{" "}
+                <strong className="text-foreground font-medium">Godot Engine</strong> for
+                game development, and explore{" "}
+                <strong className="text-foreground font-medium">AI Engineering</strong>{" "}
+                with multi-agent orchestration and prompt architecture.
               </p>
 
               {/* Quick facts — GitHub list style */}
@@ -50,11 +53,11 @@ export function AboutSection() {
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
-                    <span>Currently studying & building <strong className="text-foreground font-medium">Frontend Development</strong> projects</span>
+                    <span>Currently working as a <strong className="text-foreground font-medium">Junior Software Engineer</strong></span>
                   </li>
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
-                    <span>Core strengths: <strong className="text-foreground font-medium">Frontend Development</strong> & <strong className="text-foreground font-medium">Responsive Design</strong></span>
+                    <span>Core strengths: <strong className="text-foreground font-medium">Frontend Development</strong>, <strong className="text-foreground font-medium">Mobile Apps</strong> & <strong className="text-foreground font-medium">Responsive Design</strong></span>
                   </li>
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
@@ -65,6 +68,7 @@ export function AboutSection() {
                     <span>Ask me about{" "}
                       <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">React</code>{" "}
                       <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">Next.js</code>{" "}
+                      <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">React Native</code>{" "}
                       <code className="px-1.5 py-0.5 rounded bg-[var(--gh-btn-bg)] text-xs font-mono text-foreground border border-[var(--gh-border)] hover:border-[var(--gh-accent-blue)] hover:shadow-[0_0_8px_rgba(88,166,255,0.15)] transition-all duration-200">TypeScript</code>
                     </span>
                   </li>
