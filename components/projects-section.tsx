@@ -92,7 +92,7 @@ const projects = [
     title: "Dokit",
     description:
       "An all-in-one toolkit built for developers, freelancers, students, and creators — bringing essential everyday tools into a single platform.",
-    image: "/images/dokit.png",
+    image: "/images/dokit_image.png",
     technologies: ["Next JS", "TypeScript", "Tailwind CSS"],
     primaryLang: "TypeScript",
     stars: 0,
