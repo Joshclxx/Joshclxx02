@@ -10,6 +10,7 @@ type Card = {
   flipped: boolean;
 };
 type Player = "human" | "cat";
+type GameResult = "humanWin" | "catWin" | "draw" | "timeout";
 type GamePhase = "playing" | "finished";
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -171,6 +172,8 @@ function createDeck(pairs: number): Card[] {
   return shuffle(cards);
 }
 
+const TURN_DURATION = 10;
+
 // ── Main Component ───────────────────────────────────────────────────────
 export default function MemoryMatchPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
@@ -184,10 +187,14 @@ export default function MemoryMatchPage() {
   const [isLocked, setIsLocked] = useState(false);
   const [gameCount, setGameCount] = useState(0);
   const [lastMatchedIds, setLastMatchedIds] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
+  const [gameResult, setGameResult] = useState<GameResult | null>(null);
 
   // Bot memory: stores emoji→card_id mapping for cards the bot has "seen"
   const botMemory = useRef<Map<string, number[]>>(new Map());
   const turnTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const phaseRef = useRef<GamePhase>("playing");
 
   // ── Hydration-safe init ──
   useEffect(() => { setCatMessage(randomLine("start")); }, []);
@@ -195,6 +202,7 @@ export default function MemoryMatchPage() {
   // ── Init ─────────────────────────────────────────────────────────────
   const startGame = useCallback((diff: Difficulty) => {
     clearTimeout(turnTimerRef.current);
+    if (countdownRef.current) clearInterval(countdownRef.current);
     const { pairs } = GRID_CONFIG[diff];
     const deck = createDeck(pairs);
     setCards(deck);
@@ -205,8 +213,11 @@ export default function MemoryMatchPage() {
     setCatMessage(randomLine("start"));
     setIsLocked(false);
     setLastMatchedIds([]);
+    setTimeLeft(TURN_DURATION);
+    setGameResult(null);
     setGameCount((c) => c + 1);
     botMemory.current = new Map();
+    phaseRef.current = "playing";
   }, []);
 
   // Init on mount
@@ -215,20 +226,70 @@ export default function MemoryMatchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Check win ────────────────────────────────────────────────────────
-  const checkGameEnd = useCallback((newCards: Card[], newScores: typeof scores) => {
-    if (newCards.every((c) => c.matched)) {
-      setPhase("finished");
-      if (newScores.human > newScores.cat) {
-        setCatMessage(randomLine("humanWin"));
-        setTotalScores((s) => ({ ...s, human: s.human + 1 }));
-      } else if (newScores.cat > newScores.human) {
+  // Keep phaseRef in sync
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+
+  // Per-turn timer — resets to TURN_DURATION when turn changes
+  useEffect(() => {
+    if (phase !== "playing") {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      return;
+    }
+    // Reset timer on turn change
+    setTimeLeft(TURN_DURATION);
+    countdownRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current!);
+          if (phaseRef.current === "playing") {
+            // Time's up for the current player — they lose
+            setPhase("finished");
+            phaseRef.current = "finished";
+            setIsLocked(true);
+            clearTimeout(turnTimerRef.current);
+            setGameResult("timeout");
+            setCatMessage("Time's up! ⏰");
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, turn]);
+
+  // Handle timeout — whoever ran out of time loses
+  useEffect(() => {
+    if (phase === "finished" && gameResult === "timeout") {
+      // The player whose turn it was when time expired loses
+      if (turn === "human") {
+        // Human timed out → cat wins
         setCatMessage(randomLine("catWin"));
         setTotalScores((s) => ({ ...s, cat: s.cat + 1 }));
       } else {
-        setCatMessage(randomLine("draw"));
-        setTotalScores((s) => ({ ...s, draws: s.draws + 1 }));
+        // Cat timed out → human wins
+        setCatMessage(randomLine("humanWin"));
+        setTotalScores((s) => ({ ...s, human: s.human + 1 }));
       }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, gameResult]);
+
+  // ── Check win ────────────────────────────────────────────────────────
+  const finishWithResult = useCallback((result: GameResult) => {
+    setPhase("finished");
+    phaseRef.current = "finished";
+    setGameResult(result);
+    if (result === "humanWin") {
+      setCatMessage(randomLine("humanWin"));
+      setTotalScores((s) => ({ ...s, human: s.human + 1 }));
+    } else if (result === "catWin") {
+      setCatMessage(randomLine("catWin"));
+      setTotalScores((s) => ({ ...s, cat: s.cat + 1 }));
+    } else if (result === "draw") {
+      setCatMessage(randomLine("draw"));
+      setTotalScores((s) => ({ ...s, draws: s.draws + 1 }));
     }
   }, []);
 
@@ -262,19 +323,18 @@ export default function MemoryMatchPage() {
         setCatMessage(randomLine(player === "cat" ? "catMatch" : "humanMatch"));
         setSelected([]);
 
+        // +2s time bonus for correct match
+        setTimeLeft((prev) => Math.min(prev + 2, TURN_DURATION));
+
         // Check win
         if (newCards.every((c) => c.matched)) {
-          setPhase("finished");
           const finalScores = newScores;
           if (finalScores.human > finalScores.cat) {
-            setCatMessage(randomLine("humanWin"));
-            setTotalScores((s) => ({ ...s, human: s.human + 1 }));
+            finishWithResult("humanWin");
           } else if (finalScores.cat > finalScores.human) {
-            setCatMessage(randomLine("catWin"));
-            setTotalScores((s) => ({ ...s, cat: s.cat + 1 }));
+            finishWithResult("catWin");
           } else {
-            setCatMessage(randomLine("draw"));
-            setTotalScores((s) => ({ ...s, draws: s.draws + 1 }));
+            finishWithResult("draw");
           }
           setIsLocked(false);
           return;
@@ -436,9 +496,9 @@ export default function MemoryMatchPage() {
   const totalPairs = GRID_CONFIG[difficulty].pairs;
 
   return (
-    <div className="h-full overflow-hidden flex flex-col px-4 sm:px-6 py-2">
+    <div className="flex flex-col px-2 sm:px-6 py-2 sm:py-4 pb-6">
       {/* Title — hidden on mobile to save space */}
-      <div className="hidden sm:block text-center mb-2 animate-fade-in-up flex-shrink-0">
+      <div className="hidden sm:block text-center mb-1 sm:mb-2 animate-fade-in-up">
         <h1 className="text-lg font-bold text-foreground mb-0.5 flex items-center justify-center gap-2">
           <span>🧠</span>
           Memory Match
@@ -450,7 +510,7 @@ export default function MemoryMatchPage() {
       </div>
 
       {/* Difficulty */}
-      <div className="flex justify-center gap-2 mb-2 animate-fade-in-up delay-100 flex-shrink-0">
+      <div className="flex justify-center gap-1 sm:gap-2 mb-1 sm:mb-2 animate-fade-in-up delay-100">
         {(["easy", "medium", "hard"] as Difficulty[]).map((d) => (
           <button
             key={d}
@@ -465,28 +525,52 @@ export default function MemoryMatchPage() {
             }`}
             id={`difficulty-${d}`}
           >
-            {d === "easy" ? "😺 Easy (6 pairs)" : d === "medium" ? "😼 Medium (8 pairs)" : "😾 Hard (10 pairs)"}
+            {d === "easy" ? "😺 Easy" : d === "medium" ? "😼 Medium" : "😾 Hard"}
           </button>
         ))}
       </div>
 
-
+      {/* Turn timer bar */}
+      <div className="max-w-xs mx-auto mb-1 sm:mb-2 animate-fade-in-up delay-150">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] text-muted-foreground">
+            {phase === "playing"
+              ? turn === "human" ? "⏱ Your turn" : "⏱ Cat's turn"
+              : "⏱ Timer"
+            }
+          </span>
+          <span className="text-[10px] font-bold" style={{
+            color: timeLeft <= 3 ? "var(--gh-accent-red)" : turn === "human" ? "var(--gh-accent-blue)" : "var(--gh-accent-green)",
+            fontVariantNumeric: "tabular-nums",
+          }}>{timeLeft}s</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-1000 ease-linear"
+            style={{
+              width: `${(timeLeft / TURN_DURATION) * 100}%`,
+              background: timeLeft <= 3 ? "var(--gh-accent-red)" : turn === "human" ? "var(--gh-accent-blue)" : "var(--gh-accent-green)",
+              boxShadow: `0 0 8px ${timeLeft <= 3 ? "var(--gh-accent-red)" : turn === "human" ? "var(--gh-accent-blue)" : "var(--gh-accent-green)"}`,
+            }}
+          />
+        </div>
+      </div>
 
       {/* Scores bar */}
-      <div className="flex justify-center mb-2 animate-fade-in-up delay-200 flex-shrink-0">
-        <div className="inline-flex items-center rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-xs font-mono">
-          <div className={`w-[60px] py-2 text-center border-r border-[var(--gh-border)] transition-colors duration-300 ${turn === "human" && phase === "playing" ? "bg-[rgba(88,166,255,0.08)]" : ""}`}>
+      <div className="flex justify-center mb-1 sm:mb-2 animate-fade-in-up delay-200">
+        <div className="inline-flex items-center rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-[10px] sm:text-xs font-mono">
+          <div className={`w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)] transition-colors duration-300 ${turn === "human" && phase === "playing" ? "bg-[rgba(88,166,255,0.08)]" : ""}`}>
             <div className="text-muted-foreground text-[10px] mb-0.5 flex items-center justify-center gap-1">
               {turn === "human" && phase === "playing" && <span className="w-1.5 h-1.5 rounded-full bg-[var(--gh-accent-blue)] animate-pulse" />}
               You
             </div>
             <div className="text-base font-bold text-[var(--gh-accent-blue)]">{scores.human}</div>
           </div>
-          <div className="w-[40px] py-2 text-center border-r border-[var(--gh-border)]">
+          <div className="w-[36px] sm:w-[40px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)]">
             <div className="text-muted-foreground text-[10px] mb-0.5">of</div>
             <div className="text-sm font-bold text-muted-foreground">{totalPairs}</div>
           </div>
-          <div className={`w-[60px] py-2 text-center transition-colors duration-300 ${turn === "cat" && phase === "playing" ? "bg-[rgba(63,185,80,0.08)]" : ""}`}>
+          <div className={`w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center transition-colors duration-300 ${turn === "cat" && phase === "playing" ? "bg-[rgba(63,185,80,0.08)]" : ""}`}>
             <div className="text-muted-foreground text-[10px] mb-0.5 flex items-center justify-center gap-1">
               {turn === "cat" && phase === "playing" && <span className="w-1.5 h-1.5 rounded-full bg-[var(--gh-accent-green)] animate-pulse" />}
               Cat
@@ -497,9 +581,9 @@ export default function MemoryMatchPage() {
       </div>
 
       {/* Game area */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-center justify-center gap-1 lg:gap-3 min-h-0">
+      <div className="relative flex flex-col items-center justify-center gap-1">
         {/* Cat panel (left) — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-2 animate-fade-in-up delay-200 order-first lg:order-none" style={{ width: 160, flexShrink: 0 }}>
+        <div className="hidden xl:flex flex-col items-center gap-2 animate-fade-in-up delay-200 absolute right-full mr-4 top-0" style={{ width: 160 }}>
           <div
             className="rounded-2xl p-3 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]"
             style={{
@@ -528,18 +612,18 @@ export default function MemoryMatchPage() {
         </div>
 
         {/* Mobile cat message */}
-        <div className="flex lg:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono" key={catMessage + "-mobile-" + gameCount}>
+        <div className="flex xl:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono" key={catMessage + "-mobile-" + gameCount}>
           <span className="text-base">{catMood === "happy" ? "😺" : catMood === "sad" ? "😿" : catMood === "thinking" ? "🤔" : "🐱"}</span>
           <span className="inline-block" style={{ animation: "memBubbleIn 0.3s ease-out" }}>{catMessage}</span>
         </div>
 
         {/* Card grid (center) */}
-        <div className="relative animate-fade-in-up delay-300">
+        <div className="relative animate-fade-in-up delay-300 w-full mx-auto" style={{ maxWidth: cols === 5 ? 640 : 560 }}>
           <div
-            className="grid mx-auto"
+            className="grid"
             style={{
-              gridTemplateColumns: `repeat(${cols}, ${cols === 5 ? 58 : 72}px)`,
-              gap: "6px",
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gap: 'clamp(4px, 1.2vw, 8px)',
             }}
             id="memory-board"
           >
@@ -552,7 +636,7 @@ export default function MemoryMatchPage() {
                   key={`${gameCount}-${card.id}`}
                   style={{
                     width: "100%",
-                    aspectRatio: cols === 5 ? "58 / 70" : "72 / 88",
+                    aspectRatio: cols === 5 ? "58 / 70" : "1 / 1.15",
                     perspective: 600,
                   }}
                 >
@@ -622,7 +706,7 @@ export default function MemoryMatchPage() {
                       }}
                     >
                       <span
-                        className="text-2xl sm:text-3xl select-none"
+                        className="text-xl sm:text-2xl md:text-4xl select-none"
                         style={{
                           animation: isJustMatched ? "memMatchPop 0.4s cubic-bezier(0.34,1.56,0.64,1)" : undefined,
                         }}
@@ -639,55 +723,93 @@ export default function MemoryMatchPage() {
           {/* Result overlay */}
           {phase === "finished" && (
             <div
-              className="absolute inset-0 flex items-center justify-center rounded-xl"
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
               style={{
-                background: "rgba(13, 17, 23, 0.75)",
-                backdropFilter: "blur(4px)",
-                animation: "memResultIn 0.4s ease-out",
+                background: "rgba(13, 17, 23, 0.85)",
+                backdropFilter: "blur(12px)",
+                animation: "memResultIn 0.35s ease-out",
               }}
             >
-              <div className="text-center">
+              <div
+                className="w-full max-w-sm rounded-2xl border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)] p-6 sm:p-8 text-center"
+                style={{
+                  boxShadow: `0 0 60px ${
+                    gameResult === "timeout" ? "rgba(248,81,73,0.12)"
+                      : gameResult === "humanWin" ? "rgba(88,166,255,0.12)"
+                      : gameResult === "catWin" ? "rgba(63,185,80,0.12)"
+                      : "rgba(210,153,34,0.12)"
+                  }, 0 24px 48px rgba(0,0,0,0.4)`,
+                  animation: "memBubbleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                }}
+              >
+                {/* Result emoji */}
+                <div className="text-5xl mb-3" style={{ animation: "memMatchPop 0.5s cubic-bezier(0.34,1.56,0.64,1)" }}>
+                  {gameResult === "timeout" ? "⏰"
+                    : gameResult === "humanWin" ? "🏆"
+                    : gameResult === "catWin" ? "😸"
+                    : "🤝"}
+                </div>
+
+                {/* Result title */}
                 <div
-                  className="text-3xl font-bold mb-2"
+                  className="text-2xl sm:text-3xl font-bold mb-1"
                   style={{
                     color:
-                      scores.human > scores.cat
-                        ? "var(--gh-accent-blue)"
-                        : scores.cat > scores.human
-                        ? "var(--gh-accent-green)"
+                      gameResult === "timeout" ? "var(--gh-accent-red)"
+                        : gameResult === "humanWin" ? "var(--gh-accent-blue)"
+                        : gameResult === "catWin" ? "var(--gh-accent-green)"
                         : "var(--gh-accent-orange)",
-                    textShadow: `0 0 20px ${
-                      scores.human > scores.cat
-                        ? "rgba(88,166,255,0.5)"
-                        : scores.cat > scores.human
-                        ? "rgba(63,185,80,0.5)"
-                        : "rgba(210,153,34,0.5)"
-                    }`,
                   }}
                 >
-                  {scores.human > scores.cat
-                    ? "You Win!"
-                    : scores.cat > scores.human
-                    ? "Cat Wins!"
+                  {gameResult === "timeout" ? "Time's Up!"
+                    : gameResult === "humanWin" ? "You Win!"
+                    : gameResult === "catWin" ? "Cat Wins!"
                     : "It's a Draw!"}
                 </div>
-                <div className="text-sm text-muted-foreground mb-3">
-                  {scores.human} – {scores.cat}
+
+                {/* Subtitle for timeout */}
+                {gameResult === "timeout" && (
+                  <div className="text-xs text-muted-foreground mb-2">
+                    {turn === "human" ? "You ran out of time" : "Cat ran out of time"}
+                  </div>
+                )}
+
+                {/* Score */}
+                <div className="flex items-center justify-center gap-6 mb-6">
+                  <div className="flex flex-col items-center">
+                    <span className="text-2xl font-bold text-[var(--gh-accent-blue)]" style={{ fontVariantNumeric: "tabular-nums" }}>{scores.human}</span>
+                    <span className="text-[10px] text-muted-foreground">You</span>
+                  </div>
+                  <span className="text-muted-foreground/30 text-xl">–</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-2xl font-bold text-[var(--gh-accent-green)]" style={{ fontVariantNumeric: "tabular-nums" }}>{scores.cat}</span>
+                    <span className="text-[10px] text-muted-foreground">Cat</span>
+                  </div>
                 </div>
-                <button
-                  onClick={() => startGame(difficulty)}
-                  className="px-5 py-2 text-sm font-semibold rounded-lg border border-[var(--gh-accent-green)] text-[var(--gh-accent-green)] hover:bg-[var(--gh-accent-green)] hover:text-white transition-all duration-200 hover:shadow-[0_0_16px_rgba(63,185,80,0.3)]"
-                  id="play-again-btn"
-                >
-                  Play Again
-                </button>
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => startGame(difficulty)}
+                    className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl bg-[var(--gh-accent-green)] text-white hover:brightness-110 transition-all duration-200 hover:shadow-[0_0_20px_rgba(63,185,80,0.35)] active:scale-[0.97]"
+                    id="play-again-btn"
+                  >
+                    Play Again
+                  </button>
+                  <a
+                    href="/play"
+                    className="flex-1 flex items-center justify-center px-4 py-3 text-sm font-semibold rounded-xl border border-[var(--gh-border)] text-muted-foreground hover:text-foreground hover:border-[var(--gh-text-secondary)] hover:bg-[var(--gh-btn-bg)] transition-all duration-200"
+                  >
+                    Arcade
+                  </a>
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {/* You panel (right) — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-2 animate-fade-in-up delay-200" style={{ width: 160, flexShrink: 0 }}>
+        <div className="hidden xl:flex flex-col items-center gap-2 animate-fade-in-up delay-200 absolute left-full ml-4 top-0" style={{ width: 160 }}>
           <div className="rounded-2xl p-3 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
             <svg width={70} height={70} viewBox="0 0 80 80">
               <rect x="8" y="8" width="64" height="64" rx="12" fill="#21262d" stroke="var(--gh-border)" strokeWidth="2" />
@@ -703,7 +825,7 @@ export default function MemoryMatchPage() {
 
       {/* Turn indicator */}
       {phase === "playing" && (
-        <div className="mt-1 text-center text-xs text-muted-foreground animate-fade-in flex-shrink-0">
+        <div className="mt-1 text-center text-xs text-muted-foreground animate-fade-in">
           {turn === "human" ? (
             <span className="flex items-center justify-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-blue)] animate-pulse" />
@@ -718,20 +840,20 @@ export default function MemoryMatchPage() {
         </div>
       )}
 
-      {/* Overall scoreboard — hidden on mobile */}
-      <div className="hidden sm:flex mt-2 justify-center animate-fade-in-up delay-400 flex-shrink-0">
-        <div className="inline-flex items-center gap-0 rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-xs font-mono">
-          <div className="w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
+      {/* Overall scoreboard */}
+      <div className="flex mt-1 sm:mt-2 justify-center animate-fade-in-up delay-400">
+        <div className="inline-flex items-center gap-0 rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-xs">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)]">
             <div className="text-muted-foreground text-[10px] mb-0.5">You</div>
-            <div className="text-base font-bold text-[var(--gh-accent-blue)]">{totalScores.human}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-blue)]" style={{ fontVariantNumeric: "tabular-nums" }}>{totalScores.human}</div>
           </div>
-          <div className="w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)]">
             <div className="text-muted-foreground text-[10px] mb-0.5">Draw</div>
-            <div className="text-base font-bold text-[var(--gh-accent-orange)]">{totalScores.draws}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-orange)]" style={{ fontVariantNumeric: "tabular-nums" }}>{totalScores.draws}</div>
           </div>
-          <div className="w-[60px] py-2 text-center">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center">
             <div className="text-muted-foreground text-[10px] mb-0.5">Cat</div>
-            <div className="text-base font-bold text-[var(--gh-accent-green)]">{totalScores.cat}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-green)]" style={{ fontVariantNumeric: "tabular-nums" }}>{totalScores.cat}</div>
           </div>
         </div>
       </div>

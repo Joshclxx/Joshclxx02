@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaViber } from "react-icons/fa";
 import { useState } from "react";
 import {
   Mail,
@@ -103,10 +103,10 @@ export function ContactSection() {
               </a>
 
               <div className="flex items-center gap-3 px-3 py-2.5 rounded-md">
-                <FaWhatsapp className="h-4 w-4 text-muted-foreground" />
+                <FaViber className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium text-foreground">WhatsApp</p>
-                  <p className="text-xs text-muted-foreground">(+63) 992-403-8038</p>
+                  <p className="text-sm font-medium text-foreground">Viber</p>
+                  <p className="text-xs text-muted-foreground">9381712437</p>
                 </div>
               </div>
 

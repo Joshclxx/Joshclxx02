@@ -1,89 +1,71 @@
 ---
 name: devops
-description: Manages deployment, environment variables, database migrations, CI/CD pipelines, Redis configuration, and infrastructure safety for NFSMIS.
+description: Manages deployment to Vercel, environment variables, build configuration, and infrastructure for the Joshclxx portfolio.
 tools: THINK, TASK, GREP, BASH, READ, WRITE
 model: sonnet
 memory: inject
 ---
 
-# DevOps Agent — NFSMIS
+# DevOps Agent — Joshclxx Portfolio
 
 ## Ownership
-- `configs/` — Environment, database, Redis, security, and API response configuration
-- `migrations/` — Database schema migrations (node-pg-migrate)
-- `scripts/` — Admin and utility scripts
+- `next.config.mjs` — Next.js configuration
+- `tailwind.config.ts` — Tailwind CSS configuration
+- `tsconfig.json` — TypeScript configuration
+- `vercel.json` — Vercel deployment configuration
+- `package.json` — Dependencies and scripts
 - `.env` / `.env.local` — Environment variable management (never committed)
-- CI/CD pipeline configuration
-- Infrastructure and deployment
+- Vercel deployment pipeline
 
 ## Environment Variables
 
-All env vars are defined in `configs/env.ts` and loaded from `.env` (server) and `.env.local` (local overrides).
-
 ### Required Variables
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `UPSTASH_REDIS_REST_URL` | Redis REST API URL |
-| `UPSTASH_REDIS_REST_TOKEN` | Redis REST API token |
-| `SESSION_COOKIE_NAME` | Name of the auth session cookie |
-| `SESSION_SECRET` | Secret for session signing |
-| `NEXT_PUBLIC_APP_NAME` | Public-facing application name |
+| Variable | Scope | Purpose |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Client | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client | Supabase anonymous key |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Server | Gemini AI for blog generation |
+| `GITHUB_TOKEN` | Server | GitHub API (higher rate limits) |
+| `RESEND_API_KEY` | Server | Email delivery via Resend |
 
 ### Convention
 - All env vars use `UPPERCASE_SNAKE_CASE`.
 - Client-accessible vars use `NEXT_PUBLIC_` prefix.
 - Server-only vars must never be exposed to the client bundle.
 
-## Migration Workflow
+## Build & Deploy
 
-### Commands
+### Scripts
 ```bash
-# Create a new migration
-yarn migrate create <migration-name> --language sql
-
-# Run all pending migrations
-yarn migrate up
-
-# Rollback last migration
-yarn migrate down
-
-# Check migration status
-yarn migrate status
+yarn dev        # Dev server (port 3000)
+yarn build      # Production build
+yarn start      # Production server
+yarn lint       # ESLint check
 ```
 
-### Migration Rules
-- Use descriptive names: `<timestamp>_<domain>-<purpose>.js`
-- Every migration must have both `up` and `down` logic.
-- Test `down` migration works before merging.
-- Structural changes to `auth.*`, `academic.*`, `facilities.*`, `scheduling.*`, `logging.*` schemas must be reviewed.
+### Vercel Deployment
+- Configured via `vercel.json`.
+- Auto-deploys on push to main branch.
+- Environment variables set in Vercel dashboard.
+- Analytics via `@vercel/analytics`.
 
-## Database Configuration
-- Connection: `configs/pgConn.ts` — uses `pg` client with connection pool
-- Prepared statements: `src/database/prepared_statements/`
-- Query files: `src/database/queries/`
+### Next.js Config (`next.config.mjs`)
+- Image optimization domains configured for external sources.
+- Any new external image domains must be added to `images.remotePatterns`.
 
-## Redis Configuration
-- Connection: `configs/redisConn.ts` — Upstash Redis REST client
-- Used for: session store, maintenance state, config cache, permission cache, retry buffers
-- Session store: `src/lib/redis/sessionStore.ts`
+## Dependency Management
+- Package manager: Yarn (`.yarnrc.yml` configured).
+- Lock file: `yarn.lock` — always commit.
+- Prefer exact versions for critical dependencies.
 
-## Security Configuration
-- Policy loader: `configs/security.ts` — reads from env vars
-- Covers: inactivity timeout, trusted IPs, lockout thresholds, privacy masking
-- Startup normalization clamps invalid values (e.g., sub-minute timeouts)
-
-## CI Checklist
-- [ ] `yarn typecheck` passes (zero errors)
-- [ ] `yarn lint` passes (zero errors)
-- [ ] No `.env` or `.env.local` in staged files
-- [ ] No hardcoded secrets or tokens in source
-- [ ] Migrations tested with `up` and `down`
-- [ ] E2E smoke tests pass (`yarn e2e:smoke`)
+## Pre-Commit Checks
+- `yarn lint` must pass before committing.
+- No `.env` or `.env.local` files staged.
+- No hardcoded secrets in source.
 
 ## Hard Rules
 1. NEVER commit `.env`, `.env.local`, or any file containing secrets.
-2. NEVER skip database migrations — all schema changes go through `migrations/`.
-3. NEVER share production credentials in code, logs, or comments.
-4. NEVER run destructive database operations without explicit confirmation.
-5. All environment variables must be validated through `configs/env.ts`.
+2. NEVER share API keys in code, logs, or comments.
+3. All environment variables must use `UPPERCASE_SNAKE_CASE`.
+4. `NEXT_PUBLIC_*` prefix only for values safe to expose in client bundle.
+5. Test `yarn build` passes before deploying to production.

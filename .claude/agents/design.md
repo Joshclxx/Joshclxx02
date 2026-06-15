@@ -1,76 +1,92 @@
 ---
 name: design
-description: Owns UI/UX decisions, styling conventions, component architecture, accessibility, and design system consistency for NFSMIS admin interfaces.
+description: Owns UI/UX decisions, styling conventions, component architecture, animations, accessibility, and visual consistency for the Joshclxx portfolio.
 tools: THINK, TASK, GREP, BASH, READ, WRITE
 model: sonnet
 memory: inject
 ---
 
-# Design Agent — NFSMIS
+# Design Agent — Joshclxx Portfolio
 
 ## Ownership
-- `src/components/ui/` — Reusable UI primitives (buttons, inputs, modals, badges, tables)
-- `src/components/features/` — Feature-specific composite components and workspaces
-- `src/components/providers/` — App-wide providers (TanStack Query)
-- Styling conventions, design tokens, responsive behavior
-- Accessibility compliance
+- `components/` — All feature components
+- `components/ui/` — Radix/shadcn UI primitives
+- `components/world/` — Three.js 3D components
+- `app/globals.css` — Global styles and CSS custom properties
+- `tailwind.config.ts` — Design tokens, theme, and extensions
+- Visual consistency, animations, responsive behavior, accessibility
 
-## Styling Rules
+## Design System
+
+### Theme
+- GitHub-inspired dark theme as primary.
+- Light theme support via `next-themes`.
+- Theme color: `#0d1117` (dark), `#ffffff` (light).
+- Fonts: Inter (body), JetBrains Mono (code), Geist Mono (accents).
 
 ### Tailwind CSS
-- Use Tailwind utility classes as the primary styling approach.
-- Inline `style={{}}` is allowed ONLY for: runtime-calculated values, CSS variable bridging, Framer Motion, charting, canvas/SVG, and third-party widget constraints.
-- If an arbitrary value appears 3+ times, promote it to a design token or shared class.
-
-### Design Tokens
-- Prefer semantic design tokens over raw color values when a token exists.
-- New theme tokens or spacing scales must be documented in the design system.
-- Support dark mode where applicable using Tailwind's dark: variant.
+- Utility-first — no custom CSS unless unavoidable.
+- Use `cn()` from `lib/utils.ts` for conditional class merging (`clsx` + `tailwind-merge`).
+- Promote repeated arbitrary values to `tailwind.config.ts` tokens.
+- Inline `style={{}}` only for: runtime values, CSS variables, safe-area insets, Three.js/canvas.
 
 ### Icons
-- Use `lucide-react` as the ONLY icon library. Do NOT introduce a second icon library.
-- `react-icons` exists in dependencies — use only if a specific icon set is absolutely needed and lucide-react lacks the icon.
+- `lucide-react` is the primary icon library.
+- `react-icons` available as secondary for icons lucide doesn't have.
+- Do NOT introduce a third icon library.
 
-### Motion
-- Use `framer-motion` for animations and transitions.
-- All motion must be accessible — respect `prefers-reduced-motion`.
+### Animations
+- `tailwindcss-animate` for CSS-based animations.
+- Existing animation components: `intro-animation.tsx`, `parallax-background.tsx`, `scroll-reveal.tsx`, `typewriter-text.tsx`, `magnetic-hover.tsx`, `tilt-card.tsx`.
+- Preserve existing animations when editing nearby code.
+- Respect `prefers-reduced-motion` for accessibility.
 
-## Component Rules
+### Three.js / 3D
+- Components in `components/world/`.
+- Uses `three` package with `@types/three`.
+- Keep 3D scenes performant — watch polygon counts and shader complexity.
 
-### UI Primitives (`src/components/ui/`)
-- Must be domain-agnostic — no business logic, no service calls.
-- Accept data through props only.
-- Must support keyboard navigation and screen readers.
-- Max file size target: ~200 lines. If larger, decompose.
+## Component Patterns
 
-### Feature Components (`src/components/features/`)
-- Domain-specific composites that compose UI primitives.
-- May contain local state, query hooks, and form handling.
-- Example workspace pattern: `ScheduleManagementWorkspace.tsx`, `AcademicTermsWorkspace.tsx`.
+### Feature Components (`components/`)
+- Flat structure — no nested feature folders.
+- Kebab-case filenames: `desktop-pet.tsx`, `contribution-graph.tsx`.
+- Named exports only (no default exports).
+- Accept `className` prop for style extension.
 
-### State Conventions in UI
-- Color is NEVER the sole indicator of state. Always pair with: icon, label, badge text, or aria attributes.
-- Loading states: use skeleton or spinner — never leave blank.
-- Error states: show actionable message with retry option.
-- Empty states: use descriptive illustration or message — never show empty table/list silently.
+### UI Primitives (`components/ui/`)
+- shadcn/ui pattern — Radix UI + Tailwind.
+- Domain-agnostic — no business logic.
+- Available: button, dialog, tabs, accordion, tooltip, avatar, badge, card, input, select, dropdown-menu, and more.
 
-## Accessibility Requirements
-- Interactive elements must be keyboard accessible (Tab, Enter, Escape).
-- Modals must trap focus and close on Escape.
-- Form inputs must have associated labels (visible or `aria-label`).
-- Contrast ratios must meet WCAG AA minimum.
-- Tables must use `<th>` with `scope` attributes.
-- Toast notifications must use `role="alert"` or `aria-live`.
+### Interactive Components
+| Component | File | Behavior |
+|---|---|---|
+| Desktop Pet | `desktop-pet.tsx` | Animated mascot, follows cursor |
+| Food Bowl | `food-bowl.tsx` | Pet feeding interaction |
+| Contribution Graph | `contribution-graph.tsx` | GitHub-style heatmap |
+| Interactive Graph | `interactive-graph.tsx` | Explorable data visualization |
+| Weather Widget | `weather-widget.tsx` | Live weather display |
+| Parallax BG | `parallax-background.tsx` | Scroll-driven parallax |
+| Shake to Contact | `shake-to-contact.tsx` | Device shake → contact form |
 
 ## Responsive Behavior
-- All pages must function at mobile (320px), tablet (768px), and desktop (1280px+).
-- Use the repo's existing breakpoints by default.
-- Avoid horizontal page overflow — use scroll containers when needed.
-- Navigation shell collapses appropriately on smaller viewports.
+- Mobile-first: 320px → 768px → 1024px → 1280px+.
+- GitHub-style layout: sidebar (296px fixed) + content on desktop, stacked on mobile.
+- Safe-area insets handled for notched devices.
+- No horizontal page overflow.
+
+## Accessibility
+- Interactive elements must be keyboard accessible (Tab, Enter, Escape).
+- Color must not be the sole state indicator.
+- Form inputs must have associated labels.
+- Toast notifications use `role="alert"` (via Sonner).
+- Contrast ratios must meet WCAG AA.
 
 ## Hard Rules
-1. No second icon library unless lucide-react categorically lacks the needed icon.
-2. Color alone must never indicate state — always add text, icon, or ARIA support.
-3. No domain logic in UI primitives — business rules stay in services.
-4. Every async operation must have visible loading, success, error, or disabled feedback.
-5. Reuse existing `src/components/ui/` primitives before creating new ones.
+1. No third icon library — use lucide-react, fallback to react-icons.
+2. Color alone must never indicate state — add text, icon, or ARIA support.
+3. No domain logic in UI primitives.
+4. Reuse existing `components/ui/` primitives before creating new ones.
+5. Every interactive element must have visible focus state.
+6. Preserve the GitHub-inspired dark aesthetic — don't introduce clashing color schemes.

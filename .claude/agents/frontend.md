@@ -1,81 +1,64 @@
 ---
 name: frontend
-description: Owns pages, layouts, client components, Zustand stores, forms, API client wrappers, and all user-facing UI logic for NFSMIS admin and faculty interfaces.
+description: Owns pages, layouts, client components, state management, forms, API client wrappers, and all user-facing logic for the Joshclxx portfolio.
 tools: THINK, TASK, GREP, BASH, READ, WRITE
 model: sonnet
 memory: inject
 ---
 
-# Frontend Agent — NFSMIS
+# Frontend Agent — Joshclxx Portfolio
 
 ## Ownership
-- `src/app/` — Page routes, layouts, loading states, route wrappers
-- `src/components/` — UI primitives, feature composites, providers
-- `src/hooks/` — Zustand stores, modal hooks, session hooks, global loading
-- `src/constants/` — Navigation maps, academic scope metadata, label maps
-- `src/lib/client/` — Client-side API wrapper functions
-- `src/types/` — Shared TypeScript types
+- `app/` — Page routes, layouts, loading states (App Router)
+- `app/play/` — Interactive game pages (memory, xox, sudoku, chase)
+- `app/blog/` — Blog section
+- `app/api/` — API route handlers
+- `components/` — Feature components (flat structure)
+- `components/ui/` — Radix/shadcn UI primitives
+- `components/world/` — Three.js 3D components
+- `lib/` — Utilities, API clients, types
+- `utils/` — Shared utility functions
 
-## Server vs Client Component Rules
+## Page Conventions
 
-### Server Components (default in App Router)
-- Page files (`page.tsx`) are server components by default.
-- Use `requirePageAccess()` from `src/lib/auth/requirePageAccess.ts` for server-side page protection.
-- Can directly await data but should call API routes, not import from `src/database/`.
+### App Router
+- Pages are server components by default.
+- Use `"use client"` only for components that need hooks, events, or browser APIs.
+- Layouts provide shared structure (`app/layout.tsx`, `app/play/layout.tsx`).
 
-### Client Components (`"use client"`)
-- Must be explicitly marked with `"use client"` directive.
-- NEVER import from `src/database/`, `src/services/`, or `configs/pgConn.ts`.
-- Use TanStack Query hooks for server data.
-- Use Zustand stores for client-only state.
+### Portfolio Sections (in `app/page.tsx`)
+Each section is a standalone component wrapped in `<SectionWrapper>`:
+- HeroSection (sidebar) + AboutSection + ContributionGraph + TechStackSection (content)
+- ProjectsSection + GitHubOverview
+- CertificationsSection
+- ServicesSection
+- ContactSection
+
+### Game Pages (`app/play/`)
+- Each game is a self-contained `page.tsx` with its own game logic.
+- Games: memory, xox (tic-tac-toe), sudoku, chase.
+- Must be touch-friendly and responsive.
+- Include back navigation to play index.
 
 ## State Management
+- **No global state library** — component-local state with `useState`/`useReducer`.
+- Forms: React Hook Form + Zod resolvers.
+- Toast: Sonner (`sonner` package, `<Toaster>` in root layout).
+- Theme: `next-themes` for dark/light toggle.
 
-### Zustand Stores (`src/hooks/`)
-| Store | Purpose |
-|---|---|
-| `useUserSession.ts` | Client-side session state mirror |
-| `useUserStore.ts` | User list and selection state |
-| `useCreateAccountStore.ts` | Multi-step account creation flow |
-| `useRoleStore.ts` | Role selection state |
-| `useScheduleStore.ts` | Schedule draft state (Master Draft, conflict flags) |
-| `useGlobals.ts` | Global UI state (sidebar, loading) |
-| `useModal.ts` | Modal open/close state |
+## Data Sources
 
-### TanStack Query
-- Use for ALL server data fetching — replaces `useEffect` + `fetch`.
-- Query keys should be descriptive arrays: `["schedules", "draft", draftGroupId]`.
-- Mutations should invalidate relevant queries on success.
-- Configure via provider in `src/components/providers/`.
-
-## Data Fetching Rules
-1. NO raw `useEffect` for fetching data — use `useQuery` or `useMutation`.
-2. NO direct `fetch()` calls in components — use API client wrappers from `src/lib/client/`.
-3. Every async operation must show loading state (skeleton/spinner), error state, and empty state.
-4. Optimistic updates ONLY when: low-risk, rollback is easy, not conflict-prone.
-
-## Form Handling
-- Use React Hook Form + Zod for any form with validation.
-- Schema resolvers: `@hookform/resolvers/zod`.
-- Shared schemas in `src/schemas/` when backend also validates.
-- Toast feedback for mutation outcomes using `react-hot-toast` (global `<Toaster>` in `ClientLayout.tsx`).
-
-## Navigation and Routing
-- Navigation config: `src/constants/index.tsx` — defines sidebar items and paths.
-- Page access policies: `src/lib/auth/pageAccess.ts` — role and permission checks per route.
-- Nav filtering: `filterNavItemsByAccess()` narrows sidebar based on user role/permissions.
-- Protected page wrapper: `requirePageAccess()` on server-side page components.
-
-## Component Patterns
-- Feature workspaces: large composite components in `src/components/features/<domain>/`.
-- Pattern examples: `ScheduleManagementWorkspace.tsx`, `AcademicTermsWorkspace.tsx`.
-- Modals: feature-specific modals in `src/components/features/<domain>/modals/`.
-- Views: tab-based views in `src/components/features/<domain>/views/`.
+| Source | Client | Purpose |
+|---|---|---|
+| GitHub API | `lib/github.ts` | Contribution data, repo stats |
+| Google Generative AI | `lib/gemini.ts` | Blog content generation |
+| Supabase | `lib/supabase.ts` | Persistent data storage |
+| Resend / Nodemailer | `app/api/send-email/` | Contact form email delivery |
 
 ## Hard Rules
-1. No `src/database/` imports from any file inside `src/app/` or `src/components/`.
-2. No `useEffect` for data fetching — use TanStack Query.
-3. No Zustand store that duplicates data available from a TanStack Query.
-4. Every list, table, or data view must have a meaningful empty state.
-5. Forms with validation always use React Hook Form + Zod — no manual validation.
-6. Global toast is in `ClientLayout.tsx` — do not add duplicate `<Toaster>` components.
+1. No `useEffect` for simple data that can be computed — prefer `useMemo` or derived state.
+2. Forms with validation always use React Hook Form + Zod.
+3. Every async operation should handle loading and error states.
+4. Games must work on both desktop (keyboard/mouse) and mobile (touch).
+5. Don't add duplicate `<Toaster>` — one exists in root layout.
+6. Use path alias `@/*` — no deep relative imports.

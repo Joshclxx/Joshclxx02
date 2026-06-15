@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useCallback } from "react";
 
 // ── Game Card Data ───────────────────────────────────────────────────────
 const games = [
@@ -113,11 +113,59 @@ const games = [
       </svg>
     ),
   },
+  {
+    id: "sudoku",
+    title: "Sudoku",
+    subtitle: "9×9",
+    description: "Fill the grid with numbers 1–9. Three difficulty levels, hints, and notes — can you solve it before the cat falls asleep?",
+    href: "/play/sudoku",
+    emoji: "🧩🔢",
+    tags: ["Solo", "Puzzle", "Logic"],
+    color: "var(--gh-accent-orange)",
+    bgGlow: "rgba(210, 153, 34, 0.08)",
+    borderGlow: "rgba(210, 153, 34, 0.3)",
+    catSvg: (
+      <svg width={64} height={64} viewBox="0 0 80 80" style={{ overflow: "visible" }}>
+        <ellipse cx="40" cy="55" rx="22" ry="18" fill="#374151" />
+        <ellipse cx="40" cy="58" rx="14" ry="12" fill="#4b5563" />
+        <circle cx="40" cy="30" r="20" fill="#374151" />
+        <polygon points="24,16 18,2 32,12" fill="#374151" />
+        <polygon points="24,15 19,4 31,12" fill="#fda4af" />
+        <polygon points="56,16 62,2 48,12" fill="#374151" />
+        <polygon points="56,15 61,4 49,12" fill="#fda4af" />
+        {/* Focused eyes */}
+        <circle cx="32" cy="27" r="5" fill="white" />
+        <circle cx="48" cy="27" r="5" fill="white" />
+        <circle cx="33" cy="29" r="3" fill="#1a1f2e" />
+        <circle cx="49" cy="29" r="3" fill="#1a1f2e" />
+        <circle cx="34" cy="28" r="1.2" fill="white" />
+        <circle cx="50" cy="28" r="1.2" fill="white" />
+        <polygon points="40,34 38,37 42,37" fill="#fda4af" />
+        <path d="M38,37 Q40,39 42,37" fill="none" stroke="#9ca3af" strokeWidth="1" strokeLinecap="round" />
+        <ellipse cx="28" cy="70" rx="10" ry="6" fill="#374151" />
+        <ellipse cx="52" cy="70" rx="10" ry="6" fill="#374151" />
+        {/* Pencil in paw */}
+        <line x1="58" y1="64" x2="66" y2="52" stroke="#d29922" strokeWidth="3" strokeLinecap="round" style={{ animation: "hubPawWave 2s ease-in-out infinite" }} />
+      </svg>
+    ),
+  },
 ];
 
 // ── Main Component ───────────────────────────────────────────────────────
 export default function PlayHub() {
+  const router = useRouter();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handleGameClick = useCallback(
+    (e: React.MouseEvent, game: { id: string; href: string }) => {
+      e.preventDefault();
+      if (loadingId) return; // prevent double-click
+      setLoadingId(game.id);
+      router.push(game.href);
+    },
+    [loadingId, router]
+  );
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
@@ -148,14 +196,21 @@ export default function PlayHub() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {games.map((game, index) => {
             const isHovered = hoveredId === game.id;
+            const isLoading = loadingId === game.id;
             return (
-              <Link
+              <a
                 key={game.id}
                 href={game.href}
                 className="group block animate-fade-in-up"
-                style={{ animationDelay: `${(index + 2) * 100}ms` }}
+                style={{
+                  animationDelay: `${(index + 2) * 100}ms`,
+                  pointerEvents: loadingId ? "none" : "auto",
+                  opacity: loadingId && !isLoading ? 0.5 : 1,
+                  transition: "opacity 0.2s",
+                }}
                 onMouseEnter={() => setHoveredId(game.id)}
                 onMouseLeave={() => setHoveredId(null)}
+                onClick={(e) => handleGameClick(e, game)}
                 id={`game-${game.id}`}
               >
                 <div
@@ -201,24 +256,49 @@ export default function PlayHub() {
                       </div>
                     </div>
 
-                    {/* Play indicator */}
+                    {/* Play indicator / Loading spinner */}
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center border transition-all duration-300"
                       style={{
-                        borderColor: isHovered ? game.color : "var(--gh-border)",
-                        background: isHovered ? game.bgGlow : "transparent",
-                        color: isHovered ? game.color : "var(--gh-text-secondary)",
+                        borderColor: isLoading || isHovered ? game.color : "var(--gh-border)",
+                        background: isLoading ? game.bgGlow : isHovered ? game.bgGlow : "transparent",
+                        color: isLoading || isHovered ? game.color : "var(--gh-text-secondary)",
                         transform: isHovered ? "scale(1.15)" : "scale(1)",
-                        boxShadow: isHovered ? `0 0 10px ${game.borderGlow}` : "none",
+                        boxShadow: isLoading || isHovered ? `0 0 10px ${game.borderGlow}` : "none",
                       }}
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                        <polygon points="6,3 20,12 6,21" />
-                      </svg>
+                      {isLoading ? (
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          className="animate-spin"
+                        >
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                      ) : (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                          <polygon points="6,3 20,12 6,21" />
+                        </svg>
+                      )}
                     </div>
+
+                    {/* Loading label */}
+                    {isLoading && (
+                      <div
+                        className="text-[10px] font-medium mt-1"
+                        style={{ color: game.color, animation: "hubPulseText 1.2s ease-in-out infinite" }}
+                      >
+                        Loading...
+                      </div>
+                    )}
                   </div>
                 </div>
-              </Link>
+              </a>
             );
           })}
         </div>
@@ -230,6 +310,10 @@ export default function PlayHub() {
         @keyframes hubPawWave {
           0%, 100% { transform: rotate(-30deg) translateY(0); }
           50% { transform: rotate(-10deg) translateY(-3px); }
+        }
+        @keyframes hubPulseText {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
         }
 
       `}</style>

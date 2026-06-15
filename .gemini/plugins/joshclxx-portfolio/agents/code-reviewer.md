@@ -1,15 +1,12 @@
 ---
 name: code-reviewer
 description: Reviews all code changes before commit, checking TypeScript safety, component patterns, styling conventions, accessibility, and security for the Joshclxx portfolio.
-tools: THINK, TASK, GREP, BASH, READ, WRITE
-model: sonnet
-memory: inject
 ---
 
 # Code Reviewer Agent — Joshclxx Portfolio
 
 ## Ownership
-- Reviewing all staged or PR changes before commit
+- Reviewing all changes before commit
 - Ensuring compliance with `PROJECT_RULES.md`
 - Flagging security, correctness, and consistency gaps
 
@@ -32,9 +29,9 @@ memory: inject
 
 ### Styling
 - [ ] Tailwind CSS used (no raw CSS unless justified)
-- [ ] `cn()` used for conditional classes
-- [ ] `lucide-react` for icons (no third icon library)
-- [ ] Dark theme consistency maintained
+- [ ] `cn()` used for conditional classes (not manual string concatenation)
+- [ ] `lucide-react` for icons (no third icon library introduced)
+- [ ] Dark theme consistency maintained (GitHub-inspired)
 - [ ] Responsive: works at 320px, 768px, 1280px+
 
 ### Accessibility
@@ -45,17 +42,17 @@ memory: inject
 
 ### API Routes (`app/api/`)
 - [ ] Zod validation on request bodies
-- [ ] No secrets or API keys in responses
-- [ ] No raw stack traces exposed
+- [ ] No secrets, API keys, or stack traces in responses
 - [ ] `NEXT_PUBLIC_*` prefix only for client-safe env vars
-
-### Security
-- [ ] No `.env` or `.env.local` committed
-- [ ] No hardcoded secrets, tokens, or API keys
 - [ ] Server-only imports not leaking to client components
 
+### Security
+- [ ] No `.env` or `.env.local` in staged files
+- [ ] No hardcoded secrets, tokens, or API keys in source
+- [ ] Server-only packages not imported in client components
+
 ### Games (`app/play/`)
-- [ ] Self-contained page component
+- [ ] Self-contained page component with game logic
 - [ ] Back navigation to play index
 - [ ] Touch-friendly for mobile
 - [ ] Game state properly managed (no stale closures)

@@ -1,94 +1,88 @@
 ---
 name: new-feature
-argument: $ARG "Name of the feature to scaffold (e.g., attendance-tracking)"
+argument: $ARG "Name of the feature to scaffold (e.g., testimonials-section, typing-game)"
 ---
 
 # Scaffold New Feature
 
-Create all files for a new feature end-to-end.
+Create all files for a new feature in the portfolio.
 
 ## Steps
 
-1. **Identify the domain:**
-   - Determine which system domain this feature belongs to (auth, academic, facilities, scheduling, etc.)
-   - Check `docs/TECHNICAL_DOCUMENTATION.md` for the domain map
-   - Check if an existing feature doc covers this area in `docs/features/`
+1. **Identify the feature type:**
 
-2. **Define the API contract:**
-   - Create shared Zod schemas in `src/schemas/$ARG.ts` (if cross-layer) or `src/lib/zod/schema/${ARG}Schema.ts` (if backend-only)
-   - Create TypeScript types in `src/types/$ARG.ts`
-   - Define request/response shapes
+   | Type | Location | Example |
+   |---|---|---|
+   | Portfolio section | `components/<name>-section.tsx` + add to `app/page.tsx` | testimonials |
+   | Game | `app/play/<name>/page.tsx` + add to play index | typing-game |
+   | Interactive widget | `components/<name>.tsx` | music-player |
+   | API endpoint | `app/api/<name>/route.ts` | analytics |
+   | Blog feature | `app/blog/<name>/` | categories |
 
-3. **Scaffold backend:**
+2. **For a new portfolio section:**
 
-   a. **Service layer** — `src/services/${ARG}Service.ts`:
-      - Business logic, validation, DB calls, cache integration
-      - Export named functions (no default exports)
-      - Use parameterized queries
-
-   b. **Database queries** — `src/database/queries/${ARG}Queries.ts`:
-      - SQL query composition functions
-      - Use prepared statements for frequent queries
-
-   c. **API route handlers** — `src/app/api/v1/${ARG}/route.ts`:
-      - Use `withAuth` or `withPermission` from `src/lib/auth/`
-      - Validate with Zod at boundary
-      - Keep handler thin — delegate to service
-      - Template:
-        ```typescript
-        import { withPermission } from "@/lib/auth/withPermission";
-        import { someSchema } from "@/lib/zod/schema/${ARG}Schema";
-
-        export const GET = withPermission("${ARG}:read", async (req, user, context) => {
-          // delegate to service
-        });
-
-        export const POST = withPermission("${ARG}:create", { bodySchema: someSchema }, async (req, user, context, body) => {
-          // delegate to service
-        });
-        ```
-
-4. **Scaffold frontend:**
-
-   a. **API client** — `src/lib/client/${ARG}Api.ts`:
-      - Typed fetch wrappers for each endpoint
-      - Return typed responses
-
-   b. **Zustand store** (if needed) — `src/hooks/use${PascalCase}Store.ts`:
-      - Client-only state that doesn't duplicate server data
-
-   c. **Feature workspace** — `src/components/features/${ARG}/${PascalCase}Workspace.tsx`:
-      - Composite component using TanStack Query for data
-      - React Hook Form + Zod for forms
-      - Loading, error, empty states
-
-   d. **Page route** — `src/app/admin/${ARG}/page.tsx`:
-      - Server component with `requirePageAccess()`
-      - Renders the workspace component
+   a. **Create component** — `components/$ARG-section.tsx`:
       ```typescript
-      import { requirePageAccess } from "@/lib/auth/requirePageAccess";
-      import ${PascalCase}Workspace from "@/components/features/${ARG}/${PascalCase}Workspace";
+      "use client";
 
-      export default async function ${PascalCase}Page() {
-        await requirePageAccess("/admin/${ARG}");
-        return <${PascalCase}Workspace />;
+      import { cn } from "@/lib/utils";
+
+      export function ${PascalCase}Section() {
+        return (
+          <section className="py-3 sm:py-6 lg:py-8">
+            {/* Section content */}
+          </section>
+        );
       }
       ```
 
-5. **Register navigation:**
-   - Add route to `src/constants/index.tsx` navigation config
-   - Add page access policy to `src/lib/auth/pageAccess.ts`
+   b. **Add to page** — Update `app/page.tsx`:
+      ```typescript
+      import { ${PascalCase}Section } from "@/components/$ARG-section";
 
-6. **Create feature documentation:**
-   - Create `docs/features/${ARG}.md` using the template:
-     - Overview, Entry Points, UI Behavior, Component Logic, UX Flows, Edge Cases, Temporary Restrictions, Dependencies
+      <SectionWrapper sectionId="$ARG">
+        <${PascalCase}Section />
+      </SectionWrapper>
+      ```
 
-7. **Update system documentation:**
-   - Add feature to `docs/TECHNICAL_DOCUMENTATION.md` capability table
-   - Update `docs/openapi.yaml` with new endpoints
+   c. **Add navigation** — Update `components/navigation.tsx` if the section needs a nav link.
 
-8. **Verify:**
+3. **For a new game:**
+
+   a. **Create page** — `app/play/$ARG/page.tsx`:
+      - Self-contained `"use client"` component with game logic
+      - Include back link to `/play`
+      - Must work on desktop (keyboard/mouse) and mobile (touch)
+      - Handle game state with `useState`/`useReducer`
+
+   b. **Add to play index** — Update `app/play/page.tsx` with a card linking to the new game.
+
+4. **For a new API route:**
+
+   a. **Create route** — `app/api/$ARG/route.ts`:
+      ```typescript
+      import { NextRequest, NextResponse } from "next/server";
+      import { z } from "zod";
+
+      const requestSchema = z.object({ /* ... */ });
+
+      export async function POST(req: NextRequest) {
+        try {
+          const body = await req.json();
+          const validated = requestSchema.parse(body);
+          // Process...
+          return NextResponse.json({ success: true, data: result });
+        } catch (err: unknown) {
+          return NextResponse.json(
+            { success: false, error: "Request failed" },
+            { status: 500 }
+          );
+        }
+      }
+      ```
+
+5. **Verify:**
    ```bash
-   yarn typecheck
    yarn lint
+   yarn build
    ```

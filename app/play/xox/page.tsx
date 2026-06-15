@@ -246,6 +246,8 @@ function randomLine(key: keyof typeof CAT_LINES): string {
 
 // ── Main Component ───────────────────────────────────────────────────────
 
+const GAME_DURATION = 30;
+
 export default function PlayPage() {
   const [board, setBoard] = useState<Board>(Array(9).fill(null));
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
@@ -257,10 +259,40 @@ export default function PlayPage() {
   const [botThinking, setBotThinking] = useState(false);
   const [lastPlaced, setLastPlaced] = useState<number | null>(null);
   const [gameCount, setGameCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const boardRef = useRef<Board>(Array(9).fill(null));
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resultRef = useRef<GameResult>(null);
 
   // Hydration-safe init
   useEffect(() => { setCatMessage(randomLine("start")); }, []);
+
+  // Keep resultRef in sync
+  useEffect(() => { resultRef.current = result; }, [result]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (result) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          // Time's up — cat wins by timeout (only if no result yet)
+          if (!resultRef.current) {
+            setResult("O");
+            setScores((s) => ({ ...s, cat: s.cat + 1 }));
+            setCatMessage("Time's up! Meow! ⏰");
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [result]);
 
   // Reset game
   const resetGame = useCallback(() => {
@@ -269,9 +301,11 @@ export default function PlayPage() {
     boardRef.current = newBoard;
     setIsPlayerTurn(true);
     setResult(null);
+    resultRef.current = null;
     setWinLine(null);
     setBotThinking(false);
     setLastPlaced(null);
+    setTimeLeft(GAME_DURATION);
     setCatMessage(randomLine("start"));
     setGameCount((c) => c + 1);
   }, []);
@@ -366,9 +400,9 @@ export default function PlayPage() {
   const catMood = result === "O" ? "happy" : result === "X" ? "sad" : result === "draw" ? "neutral" : botThinking ? "thinking" : "neutral";
 
   return (
-    <div className="h-full overflow-hidden flex flex-col px-4 sm:px-6 py-2">
+    <div className="flex flex-col px-2 sm:px-6 py-2 sm:py-4 pb-6">
       {/* Title area — hidden on mobile */}
-      <div className="hidden sm:block text-center mb-2 animate-fade-in-up flex-shrink-0">
+      <div className="hidden sm:block text-center mb-2 animate-fade-in-up">
         <h1 className="text-lg font-bold text-foreground mb-0.5 flex items-center justify-center gap-2">
           <span>🎮</span>
           Tic-Tac-Toe
@@ -380,7 +414,7 @@ export default function PlayPage() {
       </div>
 
       {/* Difficulty selector */}
-      <div className="flex justify-center gap-2 mb-2 animate-fade-in-up delay-100 flex-shrink-0">
+      <div className="flex justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2 animate-fade-in-up delay-100">
         {(["easy", "medium", "hard"] as Difficulty[]).map((d) => (
           <button
             key={d}
@@ -388,7 +422,7 @@ export default function PlayPage() {
               setDifficulty(d);
               resetGame();
             }}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-all duration-200 ${
+            className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md border transition-all duration-200 ${
               difficulty === d
                 ? "bg-[var(--gh-accent-blue)] text-white border-[var(--gh-accent-blue)] shadow-[0_0_12px_rgba(88,166,255,0.3)]"
                 : "bg-[var(--gh-btn-bg)] text-muted-foreground border-[var(--gh-border)] hover:border-[var(--gh-text-secondary)] hover:text-foreground"
@@ -400,13 +434,29 @@ export default function PlayPage() {
         ))}
       </div>
 
-
+      {/* Timer bar */}
+      <div className="max-w-xs mx-auto mb-1 sm:mb-2 animate-fade-in-up delay-150">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] text-muted-foreground font-mono">⏱ Time</span>
+          <span className="text-[10px] font-mono font-bold" style={{ color: timeLeft <= 5 ? "var(--gh-accent-red)" : timeLeft <= 10 ? "var(--gh-accent-orange)" : "var(--gh-accent-green)" }}>{timeLeft}s</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-1000 ease-linear"
+            style={{
+              width: `${(timeLeft / GAME_DURATION) * 100}%`,
+              background: timeLeft <= 5 ? "var(--gh-accent-red)" : timeLeft <= 10 ? "var(--gh-accent-orange)" : "var(--gh-accent-green)",
+              boxShadow: `0 0 8px ${timeLeft <= 5 ? "var(--gh-accent-red)" : timeLeft <= 10 ? "var(--gh-accent-orange)" : "var(--gh-accent-green)"}`,
+            }}
+          />
+        </div>
+      </div>
 
       {/* Main game area */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-center justify-center gap-1 lg:gap-3 min-h-0">
+      <div className="relative flex flex-col items-center justify-center gap-1">
 
         {/* Cat panel — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-3 animate-fade-in-up delay-200 order-first lg:order-none" style={{ width: 160, flexShrink: 0 }}>
+        <div className="hidden xl:flex flex-col items-center gap-3 animate-fade-in-up delay-200 absolute right-full mr-4 top-0" style={{ width: 160 }}>
           <div
             className="relative rounded-2xl p-4 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]"
             style={{
@@ -436,7 +486,7 @@ export default function PlayPage() {
         </div>
 
         {/* Mobile cat message */}
-        <div className="flex lg:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono" key={catMessage + "-mobile"}>
+        <div className="flex xl:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono" key={catMessage + "-mobile"}>
           <span className="text-base">{catMood === "happy" ? "😺" : catMood === "sad" ? "😿" : catMood === "thinking" ? "🤔" : "🐱"}</span>
           <span className="inline-block" style={{ animation: "xoxBubbleIn 0.3s ease-out" }}>{catMessage}</span>
         </div>
@@ -461,7 +511,7 @@ export default function PlayPage() {
                   key={i}
                   onClick={() => handleCellClick(i)}
                   disabled={!!result || cell !== null || !isPlayerTurn || botThinking}
-                  className="relative w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] lg:w-[130px] lg:h-[130px] flex items-center justify-center transition-all duration-200"
+                  className="relative flex items-center justify-center transition-all duration-200 xox-cell"
                   style={{
                     background: isWinCell
                       ? result === "X"
@@ -475,14 +525,14 @@ export default function PlayPage() {
                 >
                   {/* Hover hint */}
                   {!cell && !result && isPlayerTurn && !botThinking && (
-                    <span className="absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl font-bold text-[var(--gh-accent-blue)] opacity-0 hover:opacity-20 transition-opacity duration-150 select-none">
+                    <span className="absolute inset-0 flex items-center justify-center font-bold text-[var(--gh-accent-blue)] opacity-0 hover:opacity-20 active:opacity-20 transition-opacity duration-150 select-none xox-mark-text">
                       X
                     </span>
                   )}
                   {/* Cell content */}
                   {cell && (
                     <span
-                      className={`text-4xl sm:text-5xl font-bold select-none ${
+                      className={`font-bold select-none xox-mark-text ${
                         cell === "X" ? "text-[var(--gh-accent-blue)]" : "text-[var(--gh-accent-green)]"
                       }`}
                       style={{
@@ -530,34 +580,55 @@ export default function PlayPage() {
           {/* Result overlay */}
           {result && (
             <div
-              className="absolute inset-0 flex items-center justify-center rounded-xl"
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
               style={{
-                background: "rgba(13, 17, 23, 0.7)",
-                backdropFilter: "blur(4px)",
-                animation: "xoxResultIn 0.4s ease-out",
+                background: "rgba(13, 17, 23, 0.85)",
+                backdropFilter: "blur(12px)",
+                animation: "xoxResultIn 0.35s ease-out",
               }}
             >
-              <div className="text-center">
-                <div className="text-3xl sm:text-4xl font-bold mb-2" style={{
+              <div
+                className="w-full max-w-sm rounded-2xl border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)] p-6 sm:p-8 text-center"
+                style={{
+                  boxShadow: `0 0 60px ${result === "X" ? "rgba(88,166,255,0.12)" : result === "O" ? "rgba(63,185,80,0.12)" : "rgba(210,153,34,0.12)"}, 0 24px 48px rgba(0,0,0,0.4)`,
+                  animation: "xoxBubbleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                }}
+              >
+                {/* Result emoji */}
+                <div className="text-5xl mb-3" style={{ animation: "xoxPlacePop 0.5s cubic-bezier(0.34,1.56,0.64,1)" }}>
+                  {result === "X" ? "🏆" : result === "O" ? "😸" : "🤝"}
+                </div>
+
+                {/* Result title */}
+                <div className="text-2xl sm:text-3xl font-bold mb-6" style={{
                   color: result === "X" ? "var(--gh-accent-blue)" : result === "O" ? "var(--gh-accent-green)" : "var(--gh-accent-orange)",
-                  textShadow: `0 0 20px ${result === "X" ? "rgba(88,166,255,0.5)" : result === "O" ? "rgba(63,185,80,0.5)" : "rgba(210,153,34,0.5)"}`,
                 }}>
                   {result === "X" ? "You Win!" : result === "O" ? "Cat Wins!" : "It's a Draw!"}
                 </div>
-                <button
-                  onClick={resetGame}
-                  className="mt-3 px-5 py-2 text-sm font-semibold rounded-lg border border-[var(--gh-accent-green)] text-[var(--gh-accent-green)] hover:bg-[var(--gh-accent-green)] hover:text-white transition-all duration-200 hover:shadow-[0_0_16px_rgba(63,185,80,0.3)]"
-                  id="play-again-btn"
-                >
-                  Play Again
-                </button>
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={resetGame}
+                    className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl bg-[var(--gh-accent-green)] text-white hover:brightness-110 transition-all duration-200 hover:shadow-[0_0_20px_rgba(63,185,80,0.35)] active:scale-[0.97]"
+                    id="play-again-btn"
+                  >
+                    Play Again
+                  </button>
+                  <a
+                    href="/play"
+                    className="w-full inline-block px-5 py-2 text-xs font-medium rounded-lg border border-[var(--gh-border)] text-muted-foreground hover:text-foreground hover:border-[var(--gh-text-secondary)] transition-all duration-200 text-center"
+                  >
+                    Back to Games
+                  </a>
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {/* Player panel — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-3 animate-fade-in-up delay-200" style={{ width: 160, flexShrink: 0 }}>
+        <div className="hidden xl:flex flex-col items-center gap-3 animate-fade-in-up delay-200 absolute left-full ml-4 top-0" style={{ width: 160 }}>
           <div className="rounded-2xl p-4 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
             <svg width={80} height={80} viewBox="0 0 80 80">
               {/* User avatar — code terminal style */}
@@ -575,26 +646,26 @@ export default function PlayPage() {
       </div>
 
       {/* Scoreboard — hidden on mobile */}
-      <div className="hidden sm:flex mt-2 justify-center animate-fade-in-up delay-400 flex-shrink-0">
+      <div className="flex mt-2 justify-center animate-fade-in-up delay-400">
         <div className="inline-flex items-center gap-0 rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-xs font-mono">
-          <div className="w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)]">
             <div className="text-muted-foreground text-[10px] mb-0.5">You</div>
-            <div className="text-base font-bold text-[var(--gh-accent-blue)]">{scores.player}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-blue)]">{scores.player}</div>
           </div>
-          <div className="w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center border-r border-[var(--gh-border)]">
             <div className="text-muted-foreground text-[10px] mb-0.5">Draw</div>
-            <div className="text-base font-bold text-[var(--gh-accent-orange)]">{scores.draws}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-orange)]">{scores.draws}</div>
           </div>
-          <div className="w-[60px] py-2 text-center">
+          <div className="w-[52px] sm:w-[60px] py-1.5 sm:py-2 text-center">
             <div className="text-muted-foreground text-[10px] mb-0.5">Cat</div>
-            <div className="text-base font-bold text-[var(--gh-accent-green)]">{scores.cat}</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-green)]">{scores.cat}</div>
           </div>
         </div>
       </div>
 
       {/* Turn indicator */}
       {!result && (
-        <div className="mt-1 text-center text-xs text-muted-foreground animate-fade-in flex-shrink-0">
+        <div className="mt-1 text-center text-xs text-muted-foreground animate-fade-in">
           {isPlayerTurn && !botThinking ? (
             <span className="flex items-center justify-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-blue)] animate-pulse" />
@@ -613,6 +684,33 @@ export default function PlayPage() {
 
       {/* Keyframe animations */}
       <style>{`
+        /* XOX cell sizing — responsive */
+        .xox-cell {
+          width: clamp(80px, 26vw, 96px);
+          height: clamp(80px, 26vw, 96px);
+        }
+        .xox-mark-text {
+          font-size: clamp(28px, 8vw, 36px);
+        }
+        @media (min-width: 640px) {
+          .xox-cell {
+            width: 120px;
+            height: 120px;
+          }
+          .xox-mark-text {
+            font-size: 48px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .xox-cell {
+            width: 140px;
+            height: 140px;
+          }
+          .xox-mark-text {
+            font-size: 56px;
+          }
+        }
+
         @keyframes xoxDot {
           0%, 100% { opacity: 0.3; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1.1); }

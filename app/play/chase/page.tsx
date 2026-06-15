@@ -482,9 +482,9 @@ export default function CatChasePage() {
   const timerColor = timeLeft <= 5 ? "var(--gh-accent-red)" : timeLeft <= 10 ? "var(--gh-accent-orange)" : "var(--gh-accent-green)";
 
   return (
-    <div className="h-full overflow-hidden flex flex-col px-4 sm:px-6 py-2">
+    <div className="flex flex-col px-2 sm:px-6 py-2 sm:py-4 pb-6">
       {/* Title — hidden on mobile */}
-      <div className="hidden sm:block text-center mb-2 animate-fade-in-up flex-shrink-0">
+      <div className="hidden sm:block text-center mb-1 sm:mb-2 animate-fade-in-up">
         <h1 className="text-lg font-bold text-foreground mb-0.5 flex items-center justify-center gap-2">
           <span>🐾</span>
           Cat Chase
@@ -496,7 +496,7 @@ export default function CatChasePage() {
       </div>
 
       {/* Difficulty */}
-      <div className="flex justify-center gap-2 mb-2 animate-fade-in-up delay-100 flex-shrink-0">
+      <div className="flex justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2 animate-fade-in-up delay-100">
         {(["easy", "medium", "hard"] as Difficulty[]).map((d) => (
           <button
             key={d}
@@ -507,7 +507,7 @@ export default function CatChasePage() {
                 setCatMessage(randomLine("idle"));
               }
             }}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-all duration-200 ${
+            className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium rounded-md border transition-all duration-200 ${
               difficulty === d
                 ? "bg-[var(--gh-accent-green)] text-white border-[var(--gh-accent-green)] shadow-[0_0_12px_rgba(63,185,80,0.3)]"
                 : "bg-[var(--gh-btn-bg)] text-muted-foreground border-[var(--gh-border)] hover:border-[var(--gh-text-secondary)] hover:text-foreground"
@@ -520,39 +520,37 @@ export default function CatChasePage() {
         ))}
       </div>
 
-
-
       {/* Stats bar */}
-      <div className="flex justify-center mb-2 animate-fade-in-up delay-200 flex-shrink-0">
+      <div className="flex justify-center mb-1 sm:mb-2 animate-fade-in-up delay-200">
         <div className="inline-flex items-center rounded-lg border border-[var(--gh-border)] overflow-hidden bg-[var(--gh-bg-secondary)] text-xs font-mono">
-          <div className="w-[48px] sm:w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
-            <div className="text-muted-foreground text-[10px]">Score</div>
-            <div className="text-base font-bold text-[var(--gh-accent-green)]">{score}</div>
+          <div className="chase-stat-cell text-center border-r border-[var(--gh-border)]">
+            <div className="text-muted-foreground text-[9px] sm:text-[10px]">Score</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-green)]">{score}</div>
           </div>
-          <div className="w-[48px] sm:w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
-            <div className="text-muted-foreground text-[10px]">Combo</div>
-            <div className="text-base font-bold" style={{ color: combo >= 3 ? "var(--gh-accent-orange)" : "var(--foreground)" }}>
+          <div className="chase-stat-cell text-center border-r border-[var(--gh-border)]">
+            <div className="text-muted-foreground text-[9px] sm:text-[10px]">Combo</div>
+            <div className="text-sm sm:text-base font-bold" style={{ color: combo >= 3 ? "var(--gh-accent-orange)" : "var(--foreground)" }}>
               {combo > 0 ? `${combo}x` : "-"}
             </div>
           </div>
-          <div className="w-[48px] sm:w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
-            <div className="text-muted-foreground text-[10px]">Caught</div>
-            <div className="text-base font-bold text-[var(--gh-accent-blue)]">{caught}</div>
+          <div className="chase-stat-cell text-center border-r border-[var(--gh-border)]">
+            <div className="text-muted-foreground text-[9px] sm:text-[10px]">Caught</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-blue)]">{caught}</div>
           </div>
-          <div className="w-[48px] sm:w-[60px] py-2 text-center border-r border-[var(--gh-border)]">
-            <div className="text-muted-foreground text-[10px]">Escaped</div>
-            <div className="text-base font-bold text-[var(--gh-accent-red)]">{escaped}</div>
+          <div className="chase-stat-cell text-center border-r border-[var(--gh-border)]">
+            <div className="text-muted-foreground text-[9px] sm:text-[10px]">Escaped</div>
+            <div className="text-sm sm:text-base font-bold text-[var(--gh-accent-red)]">{escaped}</div>
           </div>
-          <div className="w-[48px] sm:w-[60px] py-2 text-center">
-            <div className="text-muted-foreground text-[10px]">Time</div>
-            <div className="text-base font-bold" style={{ color: timerColor }}>{timeLeft}s</div>
+          <div className="chase-stat-cell text-center">
+            <div className="text-muted-foreground text-[9px] sm:text-[10px]">Time</div>
+            <div className="text-sm sm:text-base font-bold" style={{ color: timerColor }}>{timeLeft}s</div>
           </div>
         </div>
       </div>
 
       {/* Timer bar */}
       {phase === "playing" && (
-        <div className="max-w-md mx-auto mb-2 h-1.5 rounded-full bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] overflow-hidden flex-shrink-0">
+        <div className="max-w-lg mx-auto w-full mb-1 sm:mb-2 h-1 sm:h-1.5 rounded-full bg-[var(--gh-bg-secondary)] border border-[var(--gh-border)] overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-1000 ease-linear"
             style={{
@@ -564,11 +562,17 @@ export default function CatChasePage() {
         </div>
       )}
 
-      {/* Game area — Cat (left) | Field (center) | You (right) */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-center justify-center gap-1 lg:gap-3 min-h-0">
+      {/* Mobile cat message */}
+      <div className="flex xl:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono mb-1" key={catMessage + "-mobile"}>
+        <span className="text-base">{catMood === "happy" ? "😺" : catMood === "sad" ? "😿" : catMood === "chasing" ? "🐾" : "🐱"}</span>
+        <span className="inline-block" style={{ animation: "chaseBubbleIn 0.3s ease-out" }}>{catMessage}</span>
+      </div>
 
-        {/* Cat panel (left) — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-2 animate-fade-in-up delay-200 order-first lg:order-none" style={{ width: 160, flexShrink: 0 }}>
+      {/* Game area — Cat (left) | Field (center) | You (right) */}
+      <div className="relative flex items-center justify-center">
+
+        {/* Cat panel (left) — xl only */}
+        <div className="hidden xl:flex flex-col items-center gap-2 animate-fade-in-up delay-200 absolute right-full mr-4 top-0" style={{ width: 150 }}>
           <div
             className="rounded-2xl p-2 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]"
             style={{
@@ -581,7 +585,7 @@ export default function CatChasePage() {
           <div
             key={catMessage}
             className="relative text-center text-xs font-medium text-foreground px-3 py-2 rounded-xl border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)] shadow-lg"
-            style={{ animation: "chaseBubbleIn 0.3s ease-out", width: 150, wordWrap: "break-word", overflowWrap: "break-word" }}
+            style={{ animation: "chaseBubbleIn 0.3s ease-out", width: 140, wordWrap: "break-word", overflowWrap: "break-word" }}
           >
             {catMessage}
             <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-[var(--gh-border)]" />
@@ -589,22 +593,12 @@ export default function CatChasePage() {
           <span className="text-xs text-muted-foreground font-mono">Pet Cat</span>
         </div>
 
-        {/* Mobile cat message */}
-        <div className="flex lg:hidden items-center justify-center gap-2 text-xs text-muted-foreground font-mono" key={catMessage + "-mobile"}>
-          <span className="text-base">{catMood === "happy" ? "😺" : catMood === "sad" ? "😿" : catMood === "chasing" ? "🐾" : "🐱"}</span>
-          <span className="inline-block" style={{ animation: "chaseBubbleIn 0.3s ease-out" }}>{catMessage}</span>
-        </div>
-
         {/* Game field (center) */}
-        <div className="flex flex-col items-center gap-2 min-h-0 w-full lg:w-auto">
+        <div className="flex flex-col items-center gap-2 w-full flex-1" style={{ maxWidth: 720 }}>
           <div
             ref={fieldRef}
-            className="relative rounded-xl border-2 overflow-hidden select-none"
+            className="relative rounded-xl border-2 overflow-hidden select-none chase-field"
             style={{
-              width: "100%",
-              maxWidth: 520,
-              aspectRatio: "4 / 3",
-              maxHeight: "calc(100dvh - 280px)",
               background: "var(--gh-bg-secondary)",
               borderColor: phase === "playing" ? "var(--gh-accent-green)" : "var(--gh-border)",
               transition: "border-color 0.3s",
@@ -652,8 +646,8 @@ export default function CatChasePage() {
                   left: `${bug.x}%`,
                   top: `${bug.y}%`,
                   transform: "translate(-50%, -50%)",
-                  width: bug.size + 12,
-                  height: bug.size + 12,
+                  width: Math.max(bug.size + 12, 48),
+                  height: Math.max(bug.size + 12, 48),
                   fontSize: bug.size,
                   lineHeight: 1,
                   cursor: "pointer",
@@ -677,75 +671,108 @@ export default function CatChasePage() {
             <Splat key={s.id} x={s.x} y={s.y} points={s.points} />
           ))}
 
-          {/* Idle / Finished overlay */}
-          {phase !== "playing" && (
+          {/* Idle overlay — inside the board */}
+          {phase === "idle" && (
             <div
               className="absolute inset-0 flex items-center justify-center"
               style={{
                 background: "rgba(13, 17, 23, 0.7)",
                 backdropFilter: "blur(4px)",
                 zIndex: 20,
-                animation: phase === "finished" ? "chaseResultIn 0.4s ease-out" : undefined,
               }}
             >
               <div className="text-center px-4">
-                {phase === "idle" && (
-                  <>
-                    <div className="text-4xl mb-3">🐾</div>
-                    <div className="text-lg font-bold text-foreground mb-2">Ready to Chase?</div>
-                    <p className="text-xs text-muted-foreground mb-4 max-w-[260px]">
-                      Tap bugs before they escape! Build combos for multiplied points.
-                    </p>
-                    <button
-                      onClick={startGame}
-                      className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-[var(--gh-accent-green)] text-white hover:shadow-[0_0_20px_rgba(63,185,80,0.4)] transition-all duration-200 hover:scale-105"
-                      id="start-btn"
-                    >
-                      Start Game
-                    </button>
-                  </>
+                <div className="text-4xl mb-3">🐾</div>
+                <div className="text-lg font-bold text-foreground mb-2">Ready to Chase?</div>
+                <p className="text-xs text-muted-foreground mb-4 max-w-[260px]">
+                  Tap bugs before they escape! Build combos for multiplied points.
+                </p>
+                <button
+                  onClick={startGame}
+                  className="px-6 py-2.5 text-sm font-semibold rounded-lg bg-[var(--gh-accent-green)] text-white hover:shadow-[0_0_20px_rgba(63,185,80,0.4)] transition-all duration-200 hover:scale-105 active:scale-95"
+                  id="start-btn"
+                >
+                  Start Game
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Finished overlay — full screen centered card */}
+          {phase === "finished" && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
+              style={{
+                background: "rgba(13, 17, 23, 0.85)",
+                backdropFilter: "blur(12px)",
+                animation: "chaseResultIn 0.35s ease-out",
+              }}
+            >
+              <div
+                className="w-full max-w-sm rounded-2xl border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)] p-6 sm:p-8 text-center"
+                style={{
+                  boxShadow: "0 0 60px rgba(63,185,80,0.12), 0 24px 48px rgba(0,0,0,0.4)",
+                  animation: "chaseBubbleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                }}
+              >
+                {/* Result emoji */}
+                <div className="text-5xl mb-3" style={{ animation: "chaseSplatPop 0.5s ease-out forwards" }}>
+                  {caught > escaped ? "🏆" : caught === escaped ? "🤝" : "😿"}
+                </div>
+
+                {/* Score */}
+                <div className="text-3xl sm:text-4xl font-bold mb-2" style={{ color: "var(--gh-accent-green)" }}>
+                  {score} pts
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground mb-1">
+                  <span><span className="text-[var(--gh-accent-blue)] font-bold">{caught}</span> caught</span>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span><span className="text-[var(--gh-accent-red)] font-bold">{escaped}</span> escaped</span>
+                </div>
+
+                {bestCombo > 1 && (
+                  <div className="text-xs text-[var(--gh-accent-orange)] mb-1">
+                    Best combo: {bestCombo}x 🔥
+                  </div>
                 )}
-                {phase === "finished" && (
-                  <>
-                    <div className="text-3xl font-bold mb-1" style={{
-                      color: "var(--gh-accent-green)",
-                      textShadow: "0 0 20px rgba(63,185,80,0.5)",
-                    }}>
-                      {score} pts
-                    </div>
-                    <div className="text-sm text-muted-foreground mb-1">
-                      {caught} caught · {escaped} escaped
-                    </div>
-                    {bestCombo > 1 && (
-                      <div className="text-xs text-[var(--gh-accent-orange)] mb-1">
-                        Best combo: {bestCombo}x 🔥
-                      </div>
-                    )}
-                    {score >= highScore && score > 0 && (
-                      <div className="text-xs text-[var(--gh-accent-purple)] mb-2" style={{ animation: "memSparkle 1s ease-in-out infinite" }}>
-                        🏆 New High Score!
-                      </div>
-                    )}
-                    <div className="text-xs text-muted-foreground mb-3">
-                      High Score: {highScore}
-                    </div>
-                    <button
-                      onClick={startGame}
-                      className="px-5 py-2 text-sm font-semibold rounded-lg border border-[var(--gh-accent-green)] text-[var(--gh-accent-green)] hover:bg-[var(--gh-accent-green)] hover:text-white transition-all duration-200 hover:shadow-[0_0_16px_rgba(63,185,80,0.3)]"
-                      id="play-again-btn"
-                    >
-                      Play Again
-                    </button>
-                  </>
+                {score >= highScore && score > 0 && (
+                  <div className="text-xs text-[var(--gh-accent-purple)] mb-4" style={{ animation: "chaseSparkle 1s ease-in-out infinite" }}>
+                    🏆 New High Score!
+                  </div>
                 )}
+                {highScore > 0 && !(score >= highScore && score > 0) && (
+                  <div className="text-xs text-muted-foreground mb-4">
+                    High Score: {highScore}
+                  </div>
+                )}
+                {!(highScore > 0) && !(score >= highScore && score > 0) && <div className="mb-4" />}
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={startGame}
+                    className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl bg-[var(--gh-accent-green)] text-white hover:brightness-110 transition-all duration-200 hover:shadow-[0_0_20px_rgba(63,185,80,0.35)] active:scale-[0.97]"
+                    id="play-again-btn"
+                  >
+                    Play Again
+                  </button>
+                  <a
+                    href="/play"
+                    className="flex-1 flex items-center justify-center px-4 py-3 text-sm font-semibold rounded-xl border border-[var(--gh-border)] text-muted-foreground hover:text-foreground hover:border-[var(--gh-text-secondary)] hover:bg-[var(--gh-btn-bg)] transition-all duration-200"
+                  >
+                    Arcade
+                  </a>
+                </div>
               </div>
             </div>
           )}
         </div>
         </div>
 
-        {/* You panel (right) — desktop only */}
-        <div className="hidden lg:flex flex-col items-center gap-2 animate-fade-in-up delay-200" style={{ width: 160, flexShrink: 0 }}>
+        {/* You panel (right) — xl only */}
+        <div className="hidden xl:flex flex-col items-center gap-2 animate-fade-in-up delay-200 absolute left-full ml-4 top-0" style={{ width: 150 }}>
           <div className="rounded-2xl p-3 border border-[var(--gh-border)] bg-[var(--gh-bg-secondary)]" style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
             <svg width={70} height={70} viewBox="0 0 80 80">
               <rect x="8" y="8" width="64" height="64" rx="12" fill="#21262d" stroke="var(--gh-border)" strokeWidth="2" />
@@ -761,17 +788,44 @@ export default function CatChasePage() {
 
       {/* High score */}
       {highScore > 0 && (
-        <div className="mt-1 text-center text-xs text-muted-foreground font-mono animate-fade-in flex-shrink-0">
+        <div className="mt-1 text-center text-xs text-muted-foreground font-mono animate-fade-in">
           🏆 High Score: <span className="text-[var(--gh-accent-green)] font-bold">{highScore}</span>
         </div>
       )}
 
-      {/* Animations */}
+      {/* Animations + responsive field sizing */}
       <style>{`
+        /* Responsive stats cells */
+        .chase-stat-cell {
+          width: clamp(44px, 14vw, 64px);
+          padding: 6px 0;
+        }
+
+        /* Game field — natural size with responsive width */
+        .chase-field {
+          width: 100%;
+          aspect-ratio: 4 / 3;
+          max-width: 480px;
+        }
+        @media (min-width: 640px) {
+          .chase-field {
+            max-width: 560px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .chase-field {
+            max-width: 680px;
+          }
+        }
+        @media (min-width: 1280px) {
+          .chase-field {
+            max-width: 720px;
+          }
+        }
+
         @keyframes chaseBugBob {
-          0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-          25% { transform: translate(-50%, -50%) scale(1.05) rotate(-5deg); }
-          75% { transform: translate(-50%, -50%) scale(0.95) rotate(5deg); }
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          50% { transform: translate(-50%, -50%) scale(1.1); }
         }
         @keyframes chaseBugFlash {
           0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }

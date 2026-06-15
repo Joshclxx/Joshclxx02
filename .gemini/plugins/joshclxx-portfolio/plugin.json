@@ -1,0 +1,32 @@
+{
+  "name": "joshclxx-portfolio",
+  "description": "Project-specific agents and skills for the Joshclxx portfolio site — design system, code review, page and component scaffolding workflows.",
+  "skills": [
+    {
+      "name": "review",
+      "path": "skills/review"
+    },
+    {
+      "name": "new-page",
+      "path": "skills/new-page"
+    },
+    {
+      "name": "new-component",
+      "path": "skills/new-component"
+    }
+  ],
+  "agents": [
+    {
+      "name": "design",
+      "path": "agents/design.md"
+    },
+    {
+      "name": "frontend",
+      "path": "agents/frontend.md"
+    },
+    {
+      "name": "code-reviewer",
+      "path": "agents/code-reviewer.md"
+    }
+  ]
+}

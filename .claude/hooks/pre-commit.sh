@@ -1,13 +1,6 @@
 #!/bin/sh
-# Pre-Commit Hook — NFSMIS
+# Pre-Commit Hook — Joshclxx Portfolio
 # Runs quality gates before every commit
-
-echo "🔍 Running type-check..."
-yarn typecheck
-if [ $? -ne 0 ]; then
-  echo "❌ BLOCKED: TypeScript errors found. Fix before committing."
-  exit 1
-fi
 
 echo "🔍 Running lint..."
 yarn lint

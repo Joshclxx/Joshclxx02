@@ -5,7 +5,7 @@ argument: $ARG "Optional: number of commits to review (default: 1)"
 
 # Full Code Review
 
-Run a comprehensive code review against project conventions.
+Run a comprehensive code review against portfolio project conventions.
 
 ## Steps
 
@@ -19,42 +19,44 @@ Run a comprehensive code review against project conventions.
    **TypeScript:**
    - No `any` usage
    - `catch (err: unknown)` on all async boundaries
-   - Shared types in `src/types/`, shared schemas in `src/schemas/`
+   - Shared types in `lib/types.ts`
+   - Path alias `@/*` used consistently
 
-   **API Routes (`src/app/api/v1/`):**
-   - Protected routes use `withAuth` or `withPermission` from `src/lib/auth/`
-   - Zod validation at every mutating boundary
-   - Error responses use `ERROR_RESPONSES` from `configs/apiResponses.ts`
-   - Route handlers are thin — business logic is in `src/services/`
-   - No raw stack traces or secrets in responses
+   **Components (`components/`):**
+   - Kebab-case filenames
+   - `"use client"` present on interactive components
+   - Named exports only
+   - `cn()` used for conditional classes
+   - UI primitives from `components/ui/` reused
+   - Loading and error states handled
+   - Keyboard accessible
 
-   **Components:**
-   - No imports from `src/database/`
-   - No `useEffect` for data fetching — use TanStack Query
-   - Forms use React Hook Form + Zod
-   - Loading, error, and empty states handled
-   - Keyboard and screen-reader accessible
+   **Styling:**
+   - Tailwind CSS used (no raw CSS unless justified)
+   - `lucide-react` for icons
+   - Dark theme consistency maintained
+   - Responsive at 320px, 768px, 1280px+
 
-   **State:**
-   - Server state uses TanStack Query
-   - Client state uses Zustand stores in `src/hooks/`
+   **API Routes (`app/api/`):**
+   - Zod validation on request bodies
+   - No secrets or stack traces in responses
+   - `NEXT_PUBLIC_*` only for client-safe values
+
+   **Games (`app/play/`):**
+   - Touch-friendly for mobile
+   - Game state managed correctly
+   - Back navigation to play index
 
    **Security:**
    - No `.env` files staged
    - No hardcoded secrets or tokens
-   - Object-level access checks where required
-
-   **Documentation:**
-   - Feature behavior changes → `docs/features/<feature>.md` updated
-   - Architecture changes → `docs/TECHNICAL_DOCUMENTATION.md` updated
-   - API contract changes → `docs/openapi.yaml` updated
 
 3. Output results in two sections:
 
    ### BLOCKING — Must Fix
-   List all issues that MUST be fixed before merge (security, correctness, missing validation, type safety).
+   List all issues that MUST be fixed before commit (security, correctness, type safety, accessibility).
 
    ### NON-BLOCKING — Advisory
-   List all issues that are suggestions or minor improvements (naming, docs polish, performance).
+   List suggestions and minor improvements (naming, performance, polish).
 
 4. If no issues found, output: "✅ All checks passed. No blocking or advisory issues found."
