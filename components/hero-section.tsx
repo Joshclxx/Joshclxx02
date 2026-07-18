@@ -156,7 +156,7 @@ export function HeroSection() {
       <div className="space-y-1.5 mb-3 sm:mb-4 text-sm text-center lg:text-left">
         <div className="flex items-center gap-2 text-muted-foreground justify-center lg:justify-start">
           <Building2 className="h-4 w-4 flex-shrink-0" />
-          <span>Junior Software Engineer</span>
+          <span>Software Engineer | Mobile App Developer</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground justify-center lg:justify-start">
           <MapPin className="h-4 w-4 flex-shrink-0" />
