@@ -155,26 +155,6 @@ function isValid(grid: CellValue[][], row: number, col: number, num: number): bo
   return true;
 }
 
-function solveSudoku(grid: CellValue[][]): boolean {
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      if (grid[r][c] === null) {
-        // Try numbers in random order for varied solutions during generation
-        const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        for (const num of nums) {
-          if (isValid(grid, r, c, num)) {
-            grid[r][c] = num;
-            if (solveSudoku(grid)) return true;
-            grid[r][c] = null;
-          }
-        }
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {

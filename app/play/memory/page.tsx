@@ -396,7 +396,7 @@ export default function MemoryMatchPage() {
         let knownPair: [number, number] | null = null;
         if (Math.random() < memChance) {
           const mem = botMemory.current;
-          for (const [emoji, ids] of mem.entries()) {
+          for (const ids of mem.values()) {
             const unmatchedIds = ids.filter((id) => {
               const card = currentCards.find((c) => c.id === id);
               return card && !card.matched;

@@ -6,50 +6,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { MagneticHover } from "@/components/magnetic-hover";
 
+const BUBBLE_MESSAGES = [
+  "Hi there!",
+  "Welcome!",
+  "Let's build!",
+  "Hire me!",
+  "React lover",
+  "Coffee first",
+  "Pixel perfect",
+];
+
 export function HeroSection() {
   const [isDark, setIsDark] = useState(true);
   const [bubbleIndex, setBubbleIndex] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
-  const [isCharging, setIsCharging] = useState(false);
-  const [batteryLevel, setBatteryLevel] = useState(0);
-
-  const bubbleMessages = [
-    "Hi there!",
-    "Welcome!",
-    "Let's build!",
-    "Hire me!",
-    "React lover",
-    "Coffee first",
-    "Pixel perfect",
-  ];
-
-  // Battery detection
-  useEffect(() => {
-    let batt: any = null;
-    const update = () => {
-      if (batt) {
-        setIsCharging(batt.charging);
-        setBatteryLevel(Math.round(batt.level * 100));
-      }
-    };
-    const init = async () => {
-      try {
-        if ("getBattery" in navigator) {
-          batt = await (navigator as any).getBattery();
-          update();
-          batt.addEventListener("chargingchange", update);
-          batt.addEventListener("levelchange", update);
-        }
-      } catch {}
-    };
-    init();
-    return () => {
-      if (batt) {
-        batt.removeEventListener("chargingchange", update);
-        batt.removeEventListener("levelchange", update);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const check = () =>
@@ -63,35 +33,27 @@ export function HeroSection() {
     return () => obs.disconnect();
   }, []);
 
-  // Build messages list — include battery status in the rotation
-  const isLowBattery = batteryLevel > 0 && batteryLevel <= 20 && !isCharging;
-  const allMessages = isLowBattery
-    ? [...bubbleMessages, `Low battery, please charge 🪫`]
-    : isCharging
-      ? [...bubbleMessages, `Charging ⚡ ${batteryLevel}%`]
-      : bubbleMessages;
-
   useEffect(() => {
     const interval = setInterval(() => {
       // Fade out
       setBubbleVisible(false);
       // After fade-out, change message and fade in
       setTimeout(() => {
-        setBubbleIndex((prev) => (prev + 1) % allMessages.length);
+        setBubbleIndex((prev) => (prev + 1) % BUBBLE_MESSAGES.length);
         setBubbleVisible(true);
       }, 300);
     }, 3500);
     return () => clearInterval(interval);
-  }, [allMessages.length]);
+  }, []);
 
-  const currentBubble = allMessages[bubbleIndex % allMessages.length];
+  const currentBubble = BUBBLE_MESSAGES[bubbleIndex % BUBBLE_MESSAGES.length];
 
   return (
     <section id="hero" className="hero-cascade">
       {/* Profile Image */}
       <div className="mb-4 flex justify-center lg:justify-start">
         <div className="profile-avatar-wrapper relative w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
-      <div className={`profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 shadow-sm bg-[var(--background)] ${isLowBattery ? 'profile-low-battery' : 'border-[var(--gh-border)]'}`}>
+          <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
             <Image
               src="/images/josh-profile.png"
               alt="Joshua Colobong"

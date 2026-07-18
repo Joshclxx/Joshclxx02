@@ -5,7 +5,6 @@ import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle, Su
 import { cn } from "@/lib/utils";
 import { useSectionFocus } from "./section-focus-context";
 import { WeatherWidget } from "@/components/weather-widget";
-import { ChargingIndicator } from "@/components/charging-indicator";
 
 const navItems = [
   { href: "#hero",           label: "Overview",      icon: Home,           mobileLabel: "Home" },
@@ -195,7 +194,6 @@ export function Navigation() {
 
             {/* Right side — weather + blog link + theme */}
             <div className="flex items-center gap-1">
-              <ChargingIndicator />
               <WeatherWidget/>
               <a
                 href="/blog"
@@ -329,7 +327,6 @@ export function Navigation() {
 
       {/* ── Mobile Bottom Tab Bar ── */}
       <div className="mobile-bottom-nav md:hidden">
-        <ChargingIndicator />
         <div className="mobile-bottom-nav-inner">
           {mobileNavItems.map((item) => {
             const IconComp = item.icon;
