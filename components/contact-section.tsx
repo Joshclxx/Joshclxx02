@@ -109,13 +109,17 @@ export function ContactSection() {
                 </div>
               </a>
 
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-md">
-                <FaViber className="h-4 w-4 text-muted-foreground" />
+              <a
+                href="viber://chat?number=%2B639381712437"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-[var(--gh-bg-secondary)] transition-colors group"
+                aria-label="Message Joshclxx on Viber"
+              >
+                <FaViber className="h-4 w-4 text-muted-foreground group-hover:text-[var(--gh-accent-blue)]" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Viber</p>
                   <p className="text-xs text-muted-foreground">9381712437</p>
                 </div>
-              </div>
+              </a>
 
               <div className="flex items-center gap-3 px-3 py-2.5 rounded-md">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
