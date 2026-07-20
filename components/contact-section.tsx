@@ -29,28 +29,35 @@ export function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const origin = window.location.origin;
-
     const body = new FormData();
     body.append("name", formData.name);
     body.append("email", formData.email);
-    body.append("subject", "New Message From Portfolio");
     body.append("message", formData.message);
     if (file) body.append("attachment", file);
 
-    await fetch(`${origin}/api/send-email`, {
-      method: "POST",
-      body,
-    }).catch((err) => {
-      console.log("Error in sending email:", err.message);
-      toast.error("Something went wrong.");
-    });
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        body,
+      });
+      const result: unknown = await response.json().catch(() => null);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast.success("Message sent successfully!");
-    setFormData({ name: "", email: "", message: "" });
-    setFile(null);
-    setIsSubmitting(false);
+      if (!response.ok) {
+        const error =
+          result && typeof result === "object" && "error" in result && typeof result.error === "string"
+            ? result.error
+            : "Something went wrong. Please try again.";
+        throw new Error(error);
+      }
+
+      toast.success("Message sent successfully!");
+      setFormData({ name: "", email: "", message: "" });
+      setFile(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -211,7 +218,11 @@ export function ContactSection() {
                         accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.zip"
                         onChange={(e) => {
                           const f = e.target.files?.[0];
-                          if (f) setFile(f);
+                          if (f && f.size > 5 * 1024 * 1024) {
+                            toast.error("Attachments must be 5 MB or smaller.");
+                          } else if (f) {
+                            setFile(f);
+                          }
                           e.target.value = "";
                         }}
                       />
