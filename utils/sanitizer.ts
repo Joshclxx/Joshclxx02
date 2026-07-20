@@ -13,7 +13,7 @@ export function escapeHtml(str: string) {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&qout;")
+        .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;")
 }
 
@@ -33,7 +33,7 @@ export function sanitizeContactInput({name, email, subject, message}: {name: str
         throw new Error("Missing fields");
     }
 
-    if (!isValidEmail) {
+    if (!isValidEmail(safeEmail)) {
         throw new Error("Invalid email.")
     }
 
