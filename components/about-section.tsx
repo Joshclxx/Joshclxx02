@@ -53,7 +53,7 @@ export function AboutSection() {
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
-                    <span>Currently working as a <strong className="text-foreground font-medium">Software Engineer | Mobile App Developer</strong></span>
+                    <span>Currently working as a <strong className="text-foreground font-medium">Software Engineer | Frontend Developer | Mobile App Developer</strong></span>
                   </li>
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">
                     <span className="text-[var(--gh-accent-green)] mt-0.5">▸</span>
