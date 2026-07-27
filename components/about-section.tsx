@@ -20,7 +20,7 @@ export function AboutSection() {
             {/* Heading with typewriter animation */}
             <div className="flex items-center gap-3 mb-6 pb-2 border-b border-[var(--gh-border)]">
               <h2 className="text-2xl font-semibold text-foreground">
-                <TypewriterText text="Hi there 👋" speed={60} delay={400} />
+                <TypewriterText text="Hi there" speed={60} delay={400} />
               </h2>
             </div>
 
@@ -48,7 +48,7 @@ export function AboutSection() {
               {/* Quick facts — GitHub list style */}
               <div className="mt-6">
                 <h3 className="text-base font-semibold text-foreground mb-3">
-                  ⚡ Quick Facts
+                  Quick Facts
                 </h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-[var(--gh-btn-bg)] transition-colors cursor-default">

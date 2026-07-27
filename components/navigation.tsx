@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle, SunMoon } from "lucide-react";
+import { Moon, Sun, Menu, X, Home, FolderGit2, Award, Package, MessageCircle, MessageSquareQuote, SunMoon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSectionFocus } from "./section-focus-context";
 import { WeatherWidget } from "@/components/weather-widget";
@@ -11,6 +11,7 @@ const navItems = [
   { href: "#projects",       label: "Repositories",  icon: FolderGit2,     mobileLabel: "Projects" },
   { href: "#certifications", label: "Achievements",  icon: Award,          mobileLabel: "Certs" },
   { href: "#services",       label: "Packages",      icon: Package,        mobileLabel: "Services" },
+  { href: "#testimonials",   label: "Testimonials",  icon: MessageSquareQuote, mobileLabel: "Reviews" },
   { href: "#contact",        label: "Contact",       icon: MessageCircle,  mobileLabel: "Contact" },
 ];
 
@@ -20,7 +21,8 @@ const mobileNavItems = [
   navItems[1], // Projects
   navItems[2], // Certs
   navItems[3], // Services
-  navItems[4], // Contact
+  navItems[4], // Testimonials
+  navItems[5], // Contact
 ];
 
 // Which scroll-section IDs each nav tab "owns"
@@ -29,6 +31,7 @@ const sectionMap: Record<string, string[]> = {
   "#projects":       ["projects"],
   "#certifications": ["certifications"],
   "#services":       ["services"],
+  "#testimonials":   ["testimonials"],
   "#contact":        ["contact"],
 };
 
@@ -78,7 +81,7 @@ export function Navigation() {
 
       const sections = [
         "hero", "about", "tech-stack",
-        "projects", "certifications", "services", "contact",
+        "projects", "certifications", "services", "testimonials", "contact",
       ];
       const scrollPosition = window.scrollY + 120;
       const pageBottom = document.documentElement.scrollHeight - window.innerHeight;

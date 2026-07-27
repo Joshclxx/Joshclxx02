@@ -11,6 +11,7 @@ const SECTION_GROUPS: Record<string, string[]> = {
   "#projects":       ["projects"],
   "#certifications": ["certifications"],
   "#services":       ["services"],
+  "#testimonials":   ["testimonials"],
   "#contact":        ["contact"],
 };
 

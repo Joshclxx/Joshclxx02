@@ -30,3 +30,22 @@ export interface GeneratedBlogContent {
   tags: string[];
   cover_image: string | null;
 }
+
+/** A publicly displayable testimonial row from Supabase. */
+export interface Testimonial {
+  id: string;
+  name: string;
+  role_or_company: string | null;
+  rating: number;
+  message: string;
+  approved: boolean;
+  created_at: string;
+}
+
+/** Fields accepted from the private testimonial submission form. */
+export interface TestimonialSubmission {
+  name: string;
+  roleOrCompany?: string;
+  rating: number;
+  message: string;
+}
