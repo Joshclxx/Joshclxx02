@@ -6,11 +6,14 @@ import { GitHubOverview } from "@/components/github-overview";
 import { ContributionGraph } from "@/components/contribution-graph";
 import { CertificationsSection } from "@/components/certifications-section";
 import { ServicesSection } from "@/components/services-section";
+import { TestimonialsSection } from "@/components/testimonials-section";
 import { ContactSection } from "@/components/contact-section";
 import { Navigation } from "@/components/navigation";
 import { PortfolioShell } from "@/components/portfolio-shell";
 import { SectionWrapper } from "@/components/section-wrapper";
 import { IntroAnimation } from "@/components/intro-animation";
+
+export const revalidate = 300;
 
 export default function Portfolio() {
   return (
@@ -61,6 +64,10 @@ export default function Portfolio() {
 
             <SectionWrapper sectionId="services">
               <ServicesSection />
+            </SectionWrapper>
+
+            <SectionWrapper sectionId="testimonials">
+              <TestimonialsSection />
             </SectionWrapper>
 
             <SectionWrapper sectionId="contact">

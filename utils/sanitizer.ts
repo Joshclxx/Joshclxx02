@@ -44,3 +44,34 @@ export function sanitizeContactInput({name, email, subject, message}: {name: str
         message: safeMessage
     }
 }
+
+export function sanitizeTestimonialInput({
+    name,
+    roleOrCompany,
+    rating,
+    message,
+}: {
+    name: string;
+    roleOrCompany?: string;
+    rating: number;
+    message: string;
+}) {
+    const safeName = stripCRLF(stripAndLimit(name, 100));
+    const safeRoleOrCompany = stripCRLF(stripAndLimit(roleOrCompany ?? "", 120)) || null;
+    const safeMessage = stripAndLimit(message, 2000);
+
+    if (!safeName || !safeMessage) {
+        throw new Error("Missing fields");
+    }
+
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        throw new Error("Invalid rating");
+    }
+
+    return {
+        name: safeName,
+        role_or_company: safeRoleOrCompany,
+        rating,
+        message: safeMessage,
+    };
+}
