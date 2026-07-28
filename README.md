@@ -20,6 +20,15 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Social Automation blog sync
+
+Set these production environment variables before enabling Social Automation:
+
+- `PORTFOLIO_SYNC_SECRET` â€” a long, random server-only value used to authorize `POST /api/scheduled-blog`.
+- `NEXT_PUBLIC_SITE_URL` â€” the canonical public portfolio origin, for example `https://your-public-portfolio-url.example`.
+
+The sync endpoint accepts a Markdown article from Social Automation and upserts it by `sourceId`. Do not commit real environment values.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
