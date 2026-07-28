@@ -23,7 +23,7 @@ Before every `git commit`, run in order:
 | Directory | Purpose |
 |---|---|
 | `app/` | Pages, layouts, API routes (App Router) |
-| `app/api/` | API route handlers (contributions, generate-blog, send-email) |
+| `app/api/` | API route handlers (contributions, scheduled-blog, send-email) |
 | `app/play/` | Interactive games (memory, xox, sudoku, chase) |
 | `app/blog/` | Blog section |
 | `components/` | Feature components (flat structure) |
@@ -58,7 +58,7 @@ Before every `git commit`, run in order:
 - Forms use React Hook Form + Zod resolvers.
 - Toast notifications via Sonner (`sonner` package, `<Toaster>` in root layout).
 - GitHub data fetched via `lib/github.ts`.
-- AI content generation via `lib/gemini.ts`.
+- Social Automation blog content is received through `app/api/scheduled-blog/`.
 
 ---
 

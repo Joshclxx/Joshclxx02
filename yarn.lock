@@ -699,13 +699,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google/generative-ai@npm:^0.24.1":
-  version: 0.24.1
-  resolution: "@google/generative-ai@npm:0.24.1"
-  checksum: 10c0/8da77fc648b04fc2ecef53e75230e2ee67a8fd29a34b6b8874e77a7332b2a1e4b51d44dd9eb604fb063ed8ea46d293aac5b1e2a955ae2435e2582a265f2cb80d
-  languageName: node
-  linkType: hard
-
 "@hookform/resolvers@npm:^3.10.0":
   version: 3.10.0
   resolution: "@hookform/resolvers@npm:3.10.0"
@@ -6384,7 +6377,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "my-v0-project@workspace:."
   dependencies:
-    "@google/generative-ai": "npm:^0.24.1"
     "@hookform/resolvers": "npm:^3.10.0"
     "@radix-ui/react-accordion": "npm:1.2.2"
     "@radix-ui/react-alert-dialog": "npm:1.1.4"
