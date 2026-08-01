@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
 import { IMAGE_BUCKET, MediaValidationError, objectPath, removeFile, uploadFile, validateUpload } from "@/lib/admin-media";
+import { DEFAULT_CONTENT_IMAGE_PATH } from "@/lib/portfolio-defaults";
 
 const technologySchema = z.array(z.object({ name: z.string().trim().min(1).max(60), color: z.string().regex(/^#[0-9a-f]{6}$/i) })).max(20);
 const projectSchema = z.object({ title: z.string().trim().min(1).max(160), description: z.string().trim().min(1).max(3000), category: z.enum(["work_experience", "personal_project"]), coming_soon: z.boolean(), technologies: technologySchema, live_url: z.string().url().startsWith("http").nullable(), code_url: z.string().url().startsWith("http").nullable() });
@@ -16,10 +17,14 @@ export async function POST(request: NextRequest) {
     const form = await request.formData();
     const parsed = projectSchema.safeParse(JSON.parse(String(form.get("payload") ?? "")) as unknown);
     const image = form.get("image");
-    if (!parsed.success || !(image instanceof File) || image.size === 0) return NextResponse.json({ error: "Valid project details and an image are required." }, { status: 400 });
-    validateUpload(image, "image");
-    imagePath = objectPath("projects", image);
-    await uploadFile(IMAGE_BUCKET, imagePath, image);
+    if (!parsed.success) return NextResponse.json({ error: "Valid project details are required." }, { status: 400 });
+    if (image instanceof File && image.size > 0) {
+      validateUpload(image, "image");
+      imagePath = objectPath("projects", image);
+      await uploadFile(IMAGE_BUCKET, imagePath, image);
+    } else {
+      imagePath = DEFAULT_CONTENT_IMAGE_PATH;
+    }
     const { data: last } = await getSupabaseAdmin().from("projects").select("position").order("position", { ascending: false }).limit(1).maybeSingle();
     const { error } = await getSupabaseAdmin().from("projects").insert({ ...parsed.data, image_path: imagePath, position: (last?.position ?? -1) + 1 });
     if (error) throw new Error("Unable to save project.");

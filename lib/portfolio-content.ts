@@ -1,5 +1,6 @@
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { CREDENTIAL_BUCKET, IMAGE_BUCKET, publicFileUrl } from "@/lib/admin-media";
+import { DEFAULT_CONTENT_IMAGE_PATH, DEFAULT_PROFILE_DARK_IMAGE_PATH, DEFAULT_PROFILE_LIGHT_IMAGE_PATH } from "@/lib/portfolio-defaults";
 import type { AvailabilityStatus, PortfolioAchievement, PortfolioProject, PortfolioProfile, ProjectTechnology } from "@/lib/types";
 
 export const defaultPortfolioProfile: PortfolioProfile = {
@@ -15,16 +16,16 @@ export const defaultPortfolioProfile: PortfolioProfile = {
     "Open to new opportunities and collaborations",
     "Ask me about `React` `Next.js` `React Native` `TypeScript`",
   ],
-  dark_image_path: "/images/josh-profile.png",
-  light_image_path: "/images/josh-profile-light.png",
-  dark_image_url: "/images/josh-profile.png",
-  light_image_url: "/images/josh-profile-light.png",
+  dark_image_path: DEFAULT_PROFILE_DARK_IMAGE_PATH,
+  light_image_path: DEFAULT_PROFILE_LIGHT_IMAGE_PATH,
+  dark_image_url: DEFAULT_PROFILE_DARK_IMAGE_PATH,
+  light_image_url: DEFAULT_PROFILE_LIGHT_IMAGE_PATH,
 };
 
 const isConfigured = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 function profileWithUrls(row: PortfolioProfile): PortfolioProfile {
-  return { ...row, dark_image_url: publicFileUrl(IMAGE_BUCKET, row.dark_image_path) ?? undefined, light_image_url: publicFileUrl(IMAGE_BUCKET, row.light_image_path) ?? undefined };
+  return { ...row, dark_image_url: publicFileUrl(IMAGE_BUCKET, row.dark_image_path) ?? DEFAULT_PROFILE_DARK_IMAGE_PATH, light_image_url: publicFileUrl(IMAGE_BUCKET, row.light_image_path) ?? DEFAULT_PROFILE_LIGHT_IMAGE_PATH };
 }
 
 function normalizeTechnologies(value: unknown): ProjectTechnology[] {
@@ -38,11 +39,11 @@ function normalizeTechnologies(value: unknown): ProjectTechnology[] {
 }
 
 function projectWithUrl(row: Omit<PortfolioProject, "image_url" | "technologies"> & { technologies: unknown }): PortfolioProject {
-  return { ...row, technologies: normalizeTechnologies(row.technologies), image_url: publicFileUrl(IMAGE_BUCKET, row.image_path) ?? "/placeholder.svg" };
+  return { ...row, technologies: normalizeTechnologies(row.technologies), image_url: publicFileUrl(IMAGE_BUCKET, row.image_path) ?? DEFAULT_CONTENT_IMAGE_PATH };
 }
 
 function achievementWithUrls(row: Omit<PortfolioAchievement, "thumbnail_url" | "credential_url">): PortfolioAchievement {
-  return { ...row, thumbnail_url: publicFileUrl(IMAGE_BUCKET, row.thumbnail_path) ?? "/placeholder.svg", credential_url: row.external_url ?? publicFileUrl(CREDENTIAL_BUCKET, row.credential_path) ?? "#" };
+  return { ...row, thumbnail_url: publicFileUrl(IMAGE_BUCKET, row.thumbnail_path) ?? DEFAULT_CONTENT_IMAGE_PATH, credential_url: row.external_url ?? publicFileUrl(CREDENTIAL_BUCKET, row.credential_path) ?? "#" };
 }
 
 export async function getPortfolioProfile(): Promise<PortfolioProfile> {
