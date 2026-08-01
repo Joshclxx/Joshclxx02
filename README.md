@@ -29,6 +29,12 @@ Set these production environment variables before enabling Social Automation:
 
 The sync endpoint accepts a Markdown article from Social Automation and upserts it by `sourceId`. Do not commit real environment values.
 
+## Portfolio admin
+
+Apply the Supabase migration in `supabase/migrations/20260801000000_create_portfolio_content.sql`, then sign in at `/admin` using `PORTFOLIO_ADMIN_PASSWORD` and `PORTFOLIO_ADMIN_SESSION_SECRET`. During the transition, both values fall back to the existing `TESTIMONIAL_ADMIN_PASSWORD` and `TESTIMONIAL_ADMIN_SESSION_SECRET` variables.
+
+The admin starts with an empty Projects and Achievements collection by design. Profile content is seeded from the current homepage. Uploaded project/profile images accept JPEG, PNG, or WebP up to 5 MB; achievement credentials accept PDF, DOCX, JPEG, or PNG up to 10 MB. Uploaded credentials are public portfolio artifacts.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

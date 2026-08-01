@@ -12,10 +12,16 @@ import { Navigation } from "@/components/navigation";
 import { PortfolioShell } from "@/components/portfolio-shell";
 import { SectionWrapper } from "@/components/section-wrapper";
 import { IntroAnimation } from "@/components/intro-animation";
+import { getPortfolioProfile, getVisibleAchievements, getVisibleProjects } from "@/lib/portfolio-content";
 
 export const revalidate = 300;
 
-export default function Portfolio() {
+export default async function Portfolio() {
+  const [profile, projects, achievements] = await Promise.all([
+    getPortfolioProfile(),
+    getVisibleProjects(),
+    getVisibleAchievements(),
+  ]);
   return (
     <PortfolioShell>
       <IntroAnimation />
@@ -30,13 +36,13 @@ export default function Portfolio() {
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10 py-3 sm:py-6 lg:py-8">
               {/* Left sidebar: fixed 296px on desktop, full-width centered on mobile */}
               <aside className="w-full lg:w-[296px] lg:flex-shrink-0">
-                <HeroSection />
+              <HeroSection profile={profile} projectCount={projects.length} />
               </aside>
 
               {/* Right content: README + contributions + tech stack */}
               <div className="flex-1 min-w-0 lg:mt-0 space-y-0">
                 <SectionWrapper sectionId="about">
-                  <AboutSection />
+                  <AboutSection profile={profile} />
                 </SectionWrapper>
                 <SectionWrapper sectionId="about">
                   <ContributionGraph />
@@ -51,7 +57,7 @@ export default function Portfolio() {
           {/* Full-width portfolio section */}
           <div className="space-y-0 pb-2 sm:pb-4">
             <SectionWrapper sectionId="projects">
-              <ProjectsSection />
+              <ProjectsSection projects={projects} />
 
               <section className="py-3 sm:py-6 lg:py-8">
                 <GitHubOverview />
@@ -59,7 +65,7 @@ export default function Portfolio() {
             </SectionWrapper>
 
             <SectionWrapper sectionId="certifications">
-              <CertificationsSection />
+              <CertificationsSection achievements={achievements} />
             </SectionWrapper>
 
             <SectionWrapper sectionId="services">

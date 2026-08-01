@@ -1,0 +1,28 @@
+"use client";
+
+import { useState } from "react";
+import { Archive, ArrowDown, ArrowUp, Award, Edit3, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import type { PortfolioAchievement } from "@/lib/types";
+import { AchievementAdminForm } from "@/components/achievement-admin-form";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
+
+export function AchievementsAdminDashboard({ initialAchievements }: { initialAchievements: PortfolioAchievement[] }) {
+  const [items, setItems] = useState(initialAchievements);
+  const [editing, setEditing] = useState<string | "new" | null>(null);
+  const [deleting, setDeleting] = useState<PortfolioAchievement | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const refresh = () => window.location.reload();
+  const action = async (item: PortfolioAchievement, kind: "archive" | "restore" | "delete") => {
+    setBusy(item.id);
+    try {
+      const response = await fetch(`/api/admin/achievements/${item.id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(kind === "delete" ? { action: kind, confirmationTitle: item.title } : { action: kind }) });
+      const result: unknown = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result && typeof result === "object" && "error" in result && typeof result.error === "string" ? result.error : "Unable to update achievement.");
+      if (kind === "delete") setItems((current) => current.filter((entry) => entry.id !== item.id)); else setItems((current) => current.map((entry) => entry.id === item.id ? { ...entry, archived_at: kind === "archive" ? new Date().toISOString() : null } : entry));
+      setDeleting(null); toast.success(kind === "archive" ? "Achievement archived." : kind === "restore" ? "Achievement restored." : "Achievement deleted.");
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : "Unable to update achievement."); } finally { setBusy(null); }
+  };
+  const move = async (index: number, direction: -1 | 1) => { const target = index + direction; if (target < 0 || target >= items.length) return; const next = [...items]; [next[index], next[target]] = [next[target], next[index]]; setItems(next); const response = await fetch("/api/admin/achievements/reorder", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: next.map((item) => item.id) }) }); if (!response.ok) { toast.error("Unable to reorder achievements."); refresh(); } };
+  return <section aria-labelledby="achievements-admin-heading"><div className="mb-6 flex items-start justify-between gap-4"><div><h2 id="achievements-admin-heading" className="text-xl font-semibold text-foreground">Achievements & Certificates</h2><p className="mt-1 text-sm text-muted-foreground">Manage the credentials shown in your public timeline.</p></div><button type="button" onClick={() => setEditing("new")} className="gh-btn gh-btn-primary text-sm"><Plus className="h-4 w-4" /> Add achievement</button></div>{editing === "new" && <div className="mb-5"><AchievementAdminForm onSaved={refresh} onCancel={() => setEditing(null)} /></div>}{items.length === 0 ? <div className="repo-card border-dashed py-10 text-center"><Award className="mx-auto h-7 w-7 text-muted-foreground" /><p className="mt-3 text-sm text-muted-foreground">No achievements yet. Add your first credential.</p></div> : <div className="space-y-3">{items.map((item, index) => <article key={item.id} className={`repo-card ${item.archived_at ? "opacity-70" : ""}`}><div className="flex flex-col gap-4 sm:flex-row sm:items-start"><img src={item.thumbnail_url} alt="" className="h-12 w-12 rounded-md object-cover" /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold text-foreground">{item.title}</h3><span className="gh-badge">{item.archived_at ? "Archived" : "Visible"}</span></div><p className="mt-1 text-xs text-muted-foreground">{item.issuer} · {item.issue_year} · {item.credential_type === "upload" ? "Uploaded file" : "External URL"}</p></div><div className="flex shrink-0 flex-wrap gap-2"><button type="button" disabled={index === 0} onClick={() => move(index, -1)} aria-label={`Move ${item.title} up`} className="gh-btn p-2"><ArrowUp className="h-4 w-4" /></button><button type="button" disabled={index === items.length - 1} onClick={() => move(index, 1)} aria-label={`Move ${item.title} down`} className="gh-btn p-2"><ArrowDown className="h-4 w-4" /></button><button type="button" onClick={() => setEditing(item.id)} aria-label={`Edit ${item.title}`} className="gh-btn p-2"><Edit3 className="h-4 w-4" /></button>{item.archived_at ? <button type="button" disabled={busy === item.id} onClick={() => action(item, "restore")} aria-label={`Restore ${item.title}`} className="gh-btn p-2"><RotateCcw className="h-4 w-4" /></button> : <button type="button" disabled={busy === item.id} onClick={() => action(item, "archive")} aria-label={`Archive ${item.title}`} className="gh-btn p-2"><Archive className="h-4 w-4" /></button>}<button type="button" disabled={busy === item.id} onClick={() => setDeleting(item)} aria-label={`Delete ${item.title}`} className="gh-btn p-2 text-[var(--gh-accent-red)]"><Trash2 className="h-4 w-4" /></button></div></div>{editing === item.id && <div className="mt-4"><AchievementAdminForm initialAchievement={item} onSaved={refresh} onCancel={() => setEditing(null)} /></div>}</article>)}</div>}{deleting && <DeleteConfirmationDialog title={deleting.title} busy={busy === deleting.id} onClose={() => setDeleting(null)} onConfirm={() => action(deleting, "delete")} />}</section>;
+}

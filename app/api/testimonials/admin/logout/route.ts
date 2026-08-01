@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isSameOriginRequest, TESTIMONIAL_ADMIN_SESSION_COOKIE } from "@/lib/testimonial-admin-auth";
+import { isSameOriginRequest, PORTFOLIO_ADMIN_SESSION_COOKIE } from "@/lib/admin-auth";
 
 export async function POST(request: NextRequest) {
   if (!isSameOriginRequest(request)) {
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json({ success: true });
-  response.cookies.set(TESTIMONIAL_ADMIN_SESSION_COOKIE, "", {
+  response.cookies.set(PORTFOLIO_ADMIN_SESSION_COOKIE, "", {
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
