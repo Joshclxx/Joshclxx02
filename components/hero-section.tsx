@@ -5,6 +5,7 @@ import { Github, Linkedin, Download, Mail, MapPin, Building2 } from "lucide-reac
 import Image from "next/image";
 import Link from "next/link";
 import { MagneticHover } from "@/components/magnetic-hover";
+import type { PortfolioProfile } from "@/lib/types";
 
 const BUBBLE_MESSAGES = [
   "Hi there!",
@@ -16,7 +17,14 @@ const BUBBLE_MESSAGES = [
   "Pixel perfect",
 ];
 
-export function HeroSection() {
+const availabilityDisplay = {
+  available: { label: "Available", highlight: "Available for hire", color: "var(--gh-accent-green)" },
+  open_to_work: { label: "Open to Work", highlight: "Open to Work", color: "var(--gh-accent-blue)" },
+  unavailable: { label: "Unavailable", highlight: "Unavailable", color: "var(--muted-foreground)" },
+} as const;
+
+export function HeroSection({ profile, projectCount }: { profile: PortfolioProfile; projectCount: number }) {
+  const availability = availabilityDisplay[profile.availability];
   const [isDark, setIsDark] = useState(true);
   const [bubbleIndex, setBubbleIndex] = useState(0);
   const [bubbleVisible, setBubbleVisible] = useState(true);
@@ -55,16 +63,16 @@ export function HeroSection() {
         <div className="profile-avatar-wrapper relative w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] lg:w-[296px] lg:h-[296px] aspect-square">
           <div className="profile-avatar-inner relative w-full h-full rounded-full overflow-hidden border-2 border-[var(--gh-border)] shadow-sm bg-[var(--background)]">
             <Image
-              src="/images/josh-profile.png"
-              alt="Joshua Colobong"
+              src={profile.dark_image_url ?? profile.dark_image_path ?? "/images/josh-profile.png"}
+              alt={profile.display_name}
               width={296}
               height={296}
               priority
               className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 profile-dark"
             />
             <Image
-              src="/images/josh-profile-light.png"
-              alt="Joshua Colobong"
+              src={profile.light_image_url ?? profile.light_image_path ?? "/images/josh-profile-light.png"}
+              alt={profile.display_name}
               width={296}
               height={296}
               priority
@@ -106,25 +114,23 @@ export function HeroSection() {
       {/* Name & Username */}
       <div className="mb-4 text-center lg:text-left">
         <h1 className="text-2xl font-semibold text-foreground leading-tight">
-          Joshua Colobong
+          {profile.display_name}
         </h1>
         <div className="flex items-center justify-center lg:justify-start mt-1">
           {/* GitHub-style status indicator */}
-          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[color-mix(in_srgb,var(--gh-accent-green)_12%,transparent)] border border-[color-mix(in_srgb,var(--gh-accent-green)_25%,transparent)]">
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ backgroundColor: `color-mix(in srgb, ${availability.color} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${availability.color} 25%, transparent)` }}>
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--gh-accent-green)] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--gh-accent-green)]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: availability.color }} />
+              <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: availability.color }} />
             </span>
-            <span className="text-[10px] font-medium text-[var(--gh-accent-green)]">Available</span>
+            <span className="text-[10px] font-medium" style={{ color: availability.color }}>{availability.label}</span>
           </span>
         </div>
       </div>
 
       {/* Bio */}
       <p className="text-sm text-muted-foreground mb-4 leading-relaxed text-center lg:text-left">
-        Junior Frontend Developer specializing in fast, responsive, and
-        user-centric web applications using React, Next.js, TypeScript, and
-        Tailwind CSS. Focused on clean code, performance, and accessibility.
+        {profile.short_bio}
       </p>
 
       {/* Action Buttons */}
@@ -207,16 +213,16 @@ export function HeroSection() {
         </h3>
         <div className="flex flex-wrap gap-1.5">
           <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
-            <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-green)]" />
-            Available for hire
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: availability.color }} />
+            {availability.highlight}
           </span>
           <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-blue)]" />
-            8 Projects
+            {projectCount} Projects
           </span>
           <span className="gh-badge transition-transform duration-200 hover:scale-105 cursor-default">
             <span className="w-2 h-2 rounded-full bg-[var(--gh-accent-purple)]" />
-            1+ Years Exp
+            {profile.experience_years}+ Years Exp.
           </span>
         </div>
       </div>

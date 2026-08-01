@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { isAdminRequest, isSameOriginRequest } from "@/lib/testimonial-admin-auth";
+import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
 
 const manageSchema = z.object({
   id: z.string().uuid(),

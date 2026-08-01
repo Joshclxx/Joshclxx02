@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, LogOut, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Testimonial } from "@/lib/types";
 
@@ -48,24 +48,9 @@ export function TestimonialAdminDashboard({ initialTestimonials }: { initialTest
     }
   };
 
-  const signOut = async () => {
-    await fetch("/api/testimonials/admin/logout", { method: "POST" });
-    window.location.reload();
-  };
-
   return (
-    <main className="min-h-screen bg-background px-4 py-8 sm:px-6 sm:py-12">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-wide text-muted-foreground">Private area</p>
-            <h1 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">Testimonial manager</h1>
-          </div>
-          <button type="button" onClick={signOut} className="gh-btn text-sm">
-            <LogOut className="h-4 w-4" /> Sign out
-          </button>
-        </div>
-
+    <section aria-labelledby="testimonial-manager-heading">
+      <h2 id="testimonial-manager-heading" className="sr-only">Testimonial manager</h2>
         {testimonials.length === 0 ? (
           <div className="repo-card py-10 text-center text-sm text-muted-foreground">No testimonial submissions yet.</div>
         ) : (
@@ -106,7 +91,6 @@ export function TestimonialAdminDashboard({ initialTestimonials }: { initialTest
             })}
           </div>
         )}
-      </div>
-    </main>
+    </section>
   );
 }
