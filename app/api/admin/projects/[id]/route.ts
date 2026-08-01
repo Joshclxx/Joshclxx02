@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
 import { IMAGE_BUCKET, MediaValidationError, objectPath, removeFile, uploadFile, validateUpload } from "@/lib/admin-media";
+import { DEFAULT_CONTENT_IMAGE_PATH } from "@/lib/portfolio-defaults";
 
 const technologySchema = z.array(z.object({ name: z.string().trim().min(1).max(60), color: z.string().regex(/^#[0-9a-f]{6}$/i) })).max(20);
 const projectSchema = z.object({ title: z.string().trim().min(1).max(160), description: z.string().trim().min(1).max(3000), category: z.enum(["work_experience", "personal_project"]), coming_soon: z.boolean(), technologies: technologySchema, live_url: z.string().url().startsWith("http").nullable(), code_url: z.string().url().startsWith("http").nullable() });
@@ -39,11 +40,11 @@ export async function POST(request: NextRequest, context: { params: { id: string
     const parsed = projectSchema.safeParse(JSON.parse(String(form.get("payload") ?? "")) as unknown);
     if (!parsed.success) return NextResponse.json({ error: "Invalid project details." }, { status: 400 });
     const image = form.get("image");
-    let imagePath = existing.image_path as string;
+    let imagePath = (existing.image_path as string | null) ?? DEFAULT_CONTENT_IMAGE_PATH;
     if (image instanceof File && image.size > 0) { validateUpload(image, "image"); uploadedPath = objectPath("projects", image); await uploadFile(IMAGE_BUCKET, uploadedPath, image); imagePath = uploadedPath; }
     const { error } = await supabase.from("projects").update({ ...parsed.data, image_path: imagePath, updated_at: new Date().toISOString() }).eq("id", params.data.id);
     if (error) throw new Error("Unable to update project.");
-    if (uploadedPath) await removeFile(IMAGE_BUCKET, existing.image_path as string);
+    if (uploadedPath) await removeFile(IMAGE_BUCKET, existing.image_path as string | null);
     revalidatePath("/");
     return NextResponse.json({ success: true });
   } catch (err: unknown) {

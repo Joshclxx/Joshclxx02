@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
 import { CREDENTIAL_BUCKET, IMAGE_BUCKET, MediaValidationError, objectPath, removeFile, uploadFile, validateUpload } from "@/lib/admin-media";
+import { DEFAULT_CONTENT_IMAGE_PATH } from "@/lib/portfolio-defaults";
 
 const achievementSchema = z.object({ title: z.string().trim().min(1).max(160), issuer: z.string().trim().min(1).max(160), issue_year: z.number().int().min(1900).max(2200), credential_type: z.enum(["upload", "external"]), external_url: z.string().url().startsWith("http").nullable() });
 
@@ -16,10 +17,13 @@ export async function POST(request: NextRequest) {
     const parsed = achievementSchema.safeParse(JSON.parse(String(form.get("payload") ?? "")) as unknown);
     const thumbnail = form.get("thumbnail");
     const credential = form.get("credential");
-    if (!parsed.success || !(thumbnail instanceof File) || thumbnail.size === 0) return NextResponse.json({ error: "Valid achievement details and a thumbnail are required." }, { status: 400 });
-    validateUpload(thumbnail, "image");
-    const thumbnailPath = objectPath("achievements", thumbnail);
-    await uploadFile(IMAGE_BUCKET, thumbnailPath, thumbnail); uploaded.push([IMAGE_BUCKET, thumbnailPath]);
+    if (!parsed.success) return NextResponse.json({ error: "Valid achievement details are required." }, { status: 400 });
+    let thumbnailPath = DEFAULT_CONTENT_IMAGE_PATH;
+    if (thumbnail instanceof File && thumbnail.size > 0) {
+      validateUpload(thumbnail, "image");
+      thumbnailPath = objectPath("achievements", thumbnail);
+      await uploadFile(IMAGE_BUCKET, thumbnailPath, thumbnail); uploaded.push([IMAGE_BUCKET, thumbnailPath]);
+    }
     let credentialPath: string | null = null;
     if (parsed.data.credential_type === "upload") {
       if (!(credential instanceof File) || credential.size === 0) throw new MediaValidationError("A credential file is required.");

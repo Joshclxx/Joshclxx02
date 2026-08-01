@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
 import { CREDENTIAL_BUCKET, IMAGE_BUCKET, MediaValidationError, objectPath, removeFile, uploadFile, validateUpload } from "@/lib/admin-media";
+import { DEFAULT_CONTENT_IMAGE_PATH } from "@/lib/portfolio-defaults";
 
 const achievementSchema = z.object({ title: z.string().trim().min(1).max(160), issuer: z.string().trim().min(1).max(160), issue_year: z.number().int().min(1900).max(2200), credential_type: z.enum(["upload", "external"]), external_url: z.string().url().startsWith("http").nullable() });
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest, context: { params: { id: string
     const form = await request.formData();
     const parsed = achievementSchema.safeParse(JSON.parse(String(form.get("payload") ?? "")) as unknown);
     if (!parsed.success) return NextResponse.json({ error: "Invalid achievement details." }, { status: 400 });
-    let thumbnailPath = existing.thumbnail_path as string;
+    let thumbnailPath = (existing.thumbnail_path as string | null) ?? DEFAULT_CONTENT_IMAGE_PATH;
     const thumbnail = form.get("thumbnail");
     if (thumbnail instanceof File && thumbnail.size > 0) { validateUpload(thumbnail, "image"); thumbnailPath = objectPath("achievements", thumbnail); await uploadFile(IMAGE_BUCKET, thumbnailPath, thumbnail); uploaded.push([IMAGE_BUCKET, thumbnailPath]); }
     let credentialPath: string | null = parsed.data.credential_type === "upload" ? existing.credential_path as string | null : null;
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest, context: { params: { id: string
     } else if (!parsed.data.external_url) throw new MediaValidationError("A credential URL is required.");
     const { error } = await supabase.from("achievements").update({ title: parsed.data.title, issuer: parsed.data.issuer, issue_year: parsed.data.issue_year, thumbnail_path: thumbnailPath, credential_type: parsed.data.credential_type, credential_path: credentialPath, external_url: parsed.data.credential_type === "external" ? parsed.data.external_url : null, updated_at: new Date().toISOString() }).eq("id", context.params.id);
     if (error) throw new Error("Unable to update achievement.");
-    if (thumbnailPath !== existing.thumbnail_path) await removeFile(IMAGE_BUCKET, existing.thumbnail_path as string);
+    if (thumbnailPath !== existing.thumbnail_path) await removeFile(IMAGE_BUCKET, existing.thumbnail_path as string | null);
     if (credentialPath !== existing.credential_path) await removeFile(CREDENTIAL_BUCKET, existing.credential_path as string | null);
     revalidatePath("/"); return NextResponse.json({ success: true });
   } catch (err: unknown) {
